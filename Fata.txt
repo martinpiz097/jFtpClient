@@ -1,0 +1,2 @@
+- Añadir verificador de conexion
+- Subir y bajar arhcivos

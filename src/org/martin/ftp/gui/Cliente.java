@@ -6,12 +6,15 @@
 package org.martin.ftp.gui;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileFilter;
 import org.apache.commons.net.ftp.FTPFile;
 import org.martin.ftp.model.TCRFiles;
 import org.martin.ftp.model.TMFiles;
@@ -25,13 +28,29 @@ public class Cliente extends javax.swing.JFrame {
 
     Accesador accesador;
     String directorioActual;
-
+    JFileChooser fileChoos;
+    
     public Cliente() {
         initComponents();
         gestion.setDefaultCloseOperation(EXIT_ON_CLOSE);
         directorioActual = "/";
         setLocationRelativeTo(null);
         setResizable(false);
+        fileChoos = new JFileChooser();
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                return true;
+            }
+
+            @Override
+            public String getDescription() {
+                return "Escoja el archivo";
+            }
+        };
+        
+        fileChoos.addChoosableFileFilter(filter);
     }
 
     /**
@@ -50,6 +69,8 @@ public class Cliente extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblFiles = new javax.swing.JTable();
+        btnUploadFile = new javax.swing.JButton();
+        btnUpdateDirectory = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -58,6 +79,12 @@ public class Cliente extends javax.swing.JFrame {
         txtUser = new javax.swing.JTextField();
         txtPassword = new javax.swing.JPasswordField();
         btnConnect = new javax.swing.JButton();
+
+        gestion.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                gestionWindowClosing(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cambiar Directorio"));
 
@@ -118,6 +145,22 @@ public class Cliente extends javax.swing.JFrame {
 
         jPanel3.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
+        btnUploadFile.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        btnUploadFile.setText("Subir Archivo");
+        btnUploadFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUploadFileActionPerformed(evt);
+            }
+        });
+
+        btnUpdateDirectory.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        btnUpdateDirectory.setText("Actualizar");
+        btnUpdateDirectory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateDirectoryActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout gestionLayout = new javax.swing.GroupLayout(gestion.getContentPane());
         gestion.getContentPane().setLayout(gestionLayout);
         gestionLayout.setHorizontalGroup(
@@ -129,7 +172,12 @@ public class Cliente extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(gestionLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE)))
+                        .addGroup(gestionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(gestionLayout.createSequentialGroup()
+                                .addComponent(btnUpdateDirectory, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnUploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         gestionLayout.setVerticalGroup(
@@ -138,7 +186,11 @@ public class Cliente extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
+                .addGroup(gestionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnUploadFile)
+                    .addComponent(btnUpdateDirectory))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -347,6 +399,41 @@ public class Cliente extends javax.swing.JFrame {
         
     }//GEN-LAST:event_txtNewDirKeyReleased
 
+    private void btnUploadFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadFileActionPerformed
+
+        fileChoos.showOpenDialog(this);
+        
+        if (fileChoos.getSelectedFile() != null) {
+            
+            try {
+                accesador.uploadFile(fileChoos.getSelectedFile(), directorioActual);
+                 updateDirectory();
+            } catch (IOException ex) {
+                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+    }//GEN-LAST:event_btnUploadFileActionPerformed
+
+    private void gestionWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_gestionWindowClosing
+
+        try {
+            accesador.logout();
+            accesador.disconnect();
+        } catch (IOException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_gestionWindowClosing
+
+    private void btnUpdateDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateDirectoryActionPerformed
+
+        try {
+            updateDirectory();
+        } catch (IOException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnUpdateDirectoryActionPerformed
+
     private void updateDirectory() throws IOException{
         
         LinkedList<FTPFile> files = accesador.getOrderedFiles();
@@ -377,6 +464,8 @@ public class Cliente extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConnect;
+    private javax.swing.JButton btnUpdateDirectory;
+    private javax.swing.JButton btnUploadFile;
     private javax.swing.JFrame gestion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -5,9 +5,11 @@
  */
 package org.martin.ftp.net;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,6 +25,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -57,8 +60,17 @@ public class Accesador {
         cliente.connect(server);
         cliente.login(user, password);
         cliente.enterLocalPassiveMode();
+        
     }
 
+    public void logout() throws IOException{
+        cliente.logout();
+    }
+    
+    public void disconnect() throws IOException{
+        cliente.disconnect();
+    }
+    
     /**
      * 
      * @param files Lista a ordenar
@@ -456,11 +468,14 @@ public class Accesador {
         textoInicial += textoAñadido;
     }
     
-    public void addFile(File f, String directory) throws MalformedURLException{
+    public void uploadFile(File f, String directory) throws IOException{
         
-        URL url = new URL("ftp://" + user + ":" + password + "@" + server + directory);
-        
-        
+        // URL url = new URL("ftp://" + user + ":" + password + "@" + server + directory);
+        // Se trabaja con cualquier tipo de archivo
+        cliente.setFileType(FTP.BINARY_FILE_TYPE);
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
+        cliente.storeFile(f.getName(), bis);
+        bis.close();
     }
     
 }
