@@ -5,6 +5,8 @@
  */
 package org.martin.ftp.model;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.LinkedList;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
@@ -17,9 +19,26 @@ import org.apache.commons.net.ftp.FTPFile;
 public class TMFiles implements TableModel{
 
     private LinkedList<FTPFile> files;
-
+    private static final NumberFormat nf = new DecimalFormat("#0.0");
+    private static final short BYTE_IN_KILOBYTE = 1024;
+    
     public TMFiles(LinkedList<FTPFile> files) {
         this.files = files;
+    }
+    
+    /**
+     * Metodo que eleva cualquier numero entregandole el exponente
+     * @param number numero a elevar
+     * @param numberOfTimes exponente
+     * @return resultado de la potencia
+     */
+    
+    private long raise(int number, int numberOfTimes){
+        
+        for (int i = 1; i < numberOfTimes; i++) 
+            number *= number;
+
+        return number;
     }
 
     public LinkedList<FTPFile> getFiles(){
@@ -65,10 +84,21 @@ public class TMFiles implements TableModel{
     public Object getValueAt(int rowIndex, int columnIndex) {
 
         FTPFile file = files.get(rowIndex);
+        long tamaño = file.getSize();
         
         if (columnIndex == 0) return file.getName();
             
-        else return file.getSize()*1024 + "kB";
+        else {
+            if (tamaño < raise(BYTE_IN_KILOBYTE, 2)) 
+                return nf.format((double) tamaño / 1000) + "kB";
+            
+            else if (tamaño < raise(BYTE_IN_KILOBYTE, 3)) 
+                return nf.format((double) tamaño / raise(BYTE_IN_KILOBYTE, 2)) + "MB";
+            
+            else 
+                return nf.format((double) tamaño / raise(BYTE_IN_KILOBYTE, 3)) + "GB";
+            
+        }
     }
 
     @Override

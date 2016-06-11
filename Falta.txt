@@ -1,1 +1,1 @@
-- Subir y bajar arhcivos
+- Borrar, editar y buscar archivos

@@ -68,6 +68,16 @@ public class Accesador {
         
     }
 
+    public void reconnect() throws IOException{
+        cliente.connect(server);
+        cliente.login(user, password);
+        cliente.enterLocalPassiveMode();
+    }
+    
+    public boolean isConnected(){
+        return cliente.isConnected();
+    }
+    
     public void logout() throws IOException{
         cliente.logout();
     }
@@ -440,6 +450,14 @@ public class Accesador {
     private void addText(String textoInicial, String textoAñadido){
         
         textoInicial += textoAñadido;
+    }
+
+    /*
+    Test
+    */
+    
+    public void createDirectory(String ruta, String name) throws IOException{
+        cliente.makeDirectory(ruta + "/" + name);
     }
     
     public void uploadFile(File f, String directory) throws IOException{

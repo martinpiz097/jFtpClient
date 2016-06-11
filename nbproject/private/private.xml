@@ -5,10 +5,6 @@
         <group name="proyectoCopaAmerica">
             <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/model/ObjectTree.java</file>
         </group>
-        <group name="red">
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/gui/Cliente.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/net/Accesador.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/model/TCRFiles.java</file>
-        </group>
+        <group name="red"/>
     </open-files>
 </project-private>
