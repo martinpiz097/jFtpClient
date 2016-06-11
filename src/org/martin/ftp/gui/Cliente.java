@@ -157,6 +157,9 @@ public class Cliente extends javax.swing.JFrame {
             }
         });
         tblFiles.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tblFilesKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tblFilesKeyReleased(evt);
             }
@@ -372,12 +375,22 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPasswordKeyReleased
 
     private void tblFilesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblFilesKeyReleased
-
+        
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) try {
+            setWorkingDirectory();
+        } catch (IOException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_tblFilesKeyReleased
 
     private void tblFilesMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblFilesMouseReleased
 
-        if (evt.getClickCount() == 2) setWorkingDirectory();
+        if (evt.getClickCount() == 2) try {
+            setWorkingDirectory();
+        } catch (IOException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_tblFilesMouseReleased
 
@@ -436,10 +449,15 @@ public class Cliente extends javax.swing.JFrame {
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         try {
             accesador.goToBeforeDirectory();
+            updateDirectory();
         } catch (IOException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnBackActionPerformed
+
+    private void tblFilesKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblFilesKeyPressed
+
+    }//GEN-LAST:event_tblFilesKeyPressed
 
     private void updateDirectory() throws IOException{
         
@@ -452,20 +470,15 @@ public class Cliente extends javax.swing.JFrame {
         tblFiles.setDefaultRenderer(Object.class, new TCRFiles(files));
     }
     
-    private void setWorkingDirectory(){
+    private void setWorkingDirectory() throws IOException{
         TMFiles model = (TMFiles) tblFiles.getModel();
         FTPFile selected = model.getFile(tblFiles.getSelectedRow());
 
         if (selected.isDirectory()) {
-
-            try {
-                accesador.setWorkingDirectory(directorioActual + "/" + selected.getName());
-                updateDirectory();
-
-            } catch (IOException ex) {
-                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
+            accesador.setWorkingDirectory(directorioActual + "/" + selected.getName());
+            updateDirectory();
+        }
+        else {
 
             int tipo = JOptionPane.INFORMATION_MESSAGE;
             int tipoOp = JOptionPane.YES_NO_OPTION;
