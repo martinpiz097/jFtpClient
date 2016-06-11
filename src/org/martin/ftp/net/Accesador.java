@@ -6,33 +6,25 @@
 package org.martin.ftp.net;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
 
 /**
  *
@@ -63,11 +55,15 @@ public class Accesador {
         
         cliente = new FTPClient();
         cliente.connect(server);
-        cliente.login(user, password);
-        cliente.enterLocalPassiveMode();
+        if (cliente.login(user, password)) 
+            cliente.enterRemotePassiveMode();
         
     }
-
+    
+    public String getReplyCode(){
+        return cliente.getReplyString();
+    }
+    
     public void reconnect() throws IOException{
         cliente.connect(server);
         cliente.login(user, password);
@@ -75,7 +71,7 @@ public class Accesador {
     }
     
     public boolean isConnected(){
-        return cliente.isConnected();
+        return FTPReply.isPositiveCompletion(cliente.getReplyCode());
     }
     
     public void logout() throws IOException{

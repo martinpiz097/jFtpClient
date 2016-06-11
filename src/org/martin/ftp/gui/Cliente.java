@@ -20,6 +20,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.martin.ftp.model.TCRFiles;
 import org.martin.ftp.model.TMFiles;
 import org.martin.ftp.net.Accesador;
+import org.martin.ftp.net.Tester;
 
 /**
  *
@@ -30,6 +31,8 @@ public class Cliente extends javax.swing.JFrame {
     Accesador accesador;
     String directorioActual;
     JFileChooser fileChoos;
+    boolean hasInternetConnection;
+    boolean isConnectedToHost;
     
     public Cliente() {
         initComponents();
@@ -344,11 +347,11 @@ public class Cliente extends javax.swing.JFrame {
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(16, 16, 16)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtServer, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(47, Short.MAX_VALUE))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtServer, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                            .addComponent(txtUser)
+                            .addComponent(txtPassword))
+                        .addContainerGap(22, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -399,19 +402,40 @@ public class Cliente extends javax.swing.JFrame {
         String user = txtUser.getText();
         String pass = txtPassword.getText();
         try {
+            
+            isConnectedToHost = Tester.isConnectedToHost(server);
+            
+            if (isConnectedToHost) {
 
-            accesador = new Accesador(server, user, pass);
-            accesador.setToParentDirectory();
-            updateDirectory();
+                accesador = new Accesador(server, user, pass);
+
+                if (accesador.isConnected()) {
+                    accesador.setToParentDirectory();
+                    updateDirectory();
+                    setVisible(false);
+                    gestion.setSize(gestion.getPreferredSize());
+                    gestion.setLocationRelativeTo(null);
+                    gestion.setVisible(true);
+                }
+                else {
+                    JOptionPane.showMessageDialog(this,
+                            "Error de conexion, uno o mas datos invalidos\nCodigo de error: " + 
+                                    accesador.getReplyCode(),
+                            "Error",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+            }
+
+            else {
+                    JOptionPane.showMessageDialog(this,
+                            "Error de conexion, servidor desconocido",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+            }
             
         } catch (IOException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        setVisible(false);
-        gestion.setSize(gestion.getPreferredSize());
-        gestion.setLocationRelativeTo(null);
-        gestion.setVisible(true);
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void txtServerKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtServerKeyReleased
