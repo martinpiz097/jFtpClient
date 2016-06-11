@@ -6,18 +6,23 @@
 package org.martin.ftp.net;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -345,35 +350,6 @@ public class Accesador {
         return lista;
     }
     
-    public void downloadFile(String rutaFile, String name) throws IOException, URISyntaxException{
-
-        URL url = new URL("ftp://" + user + ":" + password + "@" + server + rutaFile);
-        File f = new File(url.toURI());
-        File local = new File(f.getName());
-        
-        local.createNewFile();
-        
-        BufferedReader lectorDown = new BufferedReader(new FileReader(f));
-        BufferedWriter bw = new BufferedWriter(new FileWriter(local));
-        
-        lectorDown.lines().forEach((line) -> {
-            try {
-                bw.write(line);
-            } catch (IOException ex) {
-                Logger.getLogger(Accesador.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
-        
-        lectorDown.close();
-        bw.flush();
-        bw.close();
-    }
-    
-    public void addFile(String nameFile){
-    
-        // Pendiente
-    }
-
     /**
      * 
      * @param nombre Nombre del archivo a buscar
@@ -444,9 +420,7 @@ public class Accesador {
         
         return resultado;
     }
-    
-    
-    
+
     public void updateFile(String textoLog, String ruta) throws MalformedURLException, IOException{
         
         URL url = new URL("ftp://" + user + ":" + password + "@" + server + ruta);
@@ -476,6 +450,13 @@ public class Accesador {
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
         cliente.storeFile(f.getName(), bis);
         bis.close();
+    }
+    
+    public void downloadFile(String name, String destiny) throws IOException{
+
+        cliente.setFileType(FTP.BINARY_FILE_TYPE);
+        FileOutputStream fos = new FileOutputStream(new File(destiny + "/" + name));
+        cliente.retrieveFile(name, fos);    
     }
     
 }
