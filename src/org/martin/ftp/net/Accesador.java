@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,6 +23,7 @@ import java.util.Optional;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.commons.net.ftp.FTPReply;
 
 /**
@@ -55,9 +55,26 @@ public class Accesador {
         
         cliente = new FTPClient();
         cliente.connect(server);
-        if (cliente.login(user, password)) 
-            cliente.enterRemotePassiveMode();
+        cliente.login(user, password);
+        cliente.enterRemotePassiveMode();
+        cliente.setFileType(FTP.BINARY_FILE_TYPE);
         
+        System.out.println(getReplyCode());
+        System.out.println(cliente.getDefaultPort());
+        System.out.println(cliente.printWorkingDirectory());
+        System.out.println(cliente.getPassiveHost());
+        Arrays.stream(cliente.listFiles()).forEach(System.out::println);
+    }
+
+    private FTPFileFilter getFilter(Filter filter){
+        
+        return (FTPFile ftpf) -> {
+            if (filter == Filter.FILES_ONLY) return !ftpf.isDirectory();
+            
+            else if (filter == Filter.DIRECTORIES_ONLY) return true;
+            
+            else return ftpf.isDirectory();
+        };
     }
     
     public String getReplyCode(){
@@ -246,21 +263,23 @@ public class Accesador {
     
     public FTPFile[] getFiles() throws IOException{
 
-        int cantFiles = 0;
-        FTPFile[] filesCliente = cliente.listFiles();
-        ArrayList<FTPFile> listFiles = new ArrayList<>();
+        // int cantFiles = 0;
+        // FTPFile[] filesCliente; 
+                
         
-        for (FTPFile file : filesCliente) if (file.isFile()) listFiles.add(file);
-        
-        FTPFile[] archivos = new FTPFile[listFiles.size()];
-        
-        for (int i = 0; i < listFiles.size(); i++) archivos[i] = listFiles.get(i);
-        
-        /*
-            Verificar funcionamiento
-            System.arraycopy(filesCliente, 0, arrayFiles, 0, filesCliente.length);
-        */
-        return archivos;
+//        ArrayList<FTPFile> listFiles = new ArrayList<>();
+//        
+//        for (FTPFile file : filesCliente) if (file.isFile()) listFiles.add(file);
+//        
+//        FTPFile[] archivos = new FTPFile[listFiles.size()];
+//        
+//        for (int i = 0; i < listFiles.size(); i++) archivos[i] = listFiles.get(i);
+//        
+//        /*
+//            Verificar funcionamiento
+//            System.arraycopy(filesCliente, 0, arrayFiles, 0, filesCliente.length);
+//        */
+        return cliente.listFiles(getWorkingDirectory(), getFilter(Filter.FILES_ONLY));
     }
     
     /**
@@ -273,21 +292,24 @@ public class Accesador {
     
     public FTPFile[] getFiles(String directory) throws IOException{
 
-        int cantFiles = 0;
-        FTPFile[] filesCliente = cliente.listFiles(directory);
-        ArrayList<FTPFile> listFiles = new ArrayList<>();
-        
-        for (FTPFile file : filesCliente) if (file.isFile()) listFiles.add(file);
-        
-        FTPFile[] archivos = new FTPFile[listFiles.size()];
-        
-        for (int i = 0; i < listFiles.size(); i++) archivos[i] = listFiles.get(i);
-        
-        /*
-            Verificar funcionamiento
-            System.arraycopy(filesCliente, 0, arrayFiles, 0, filesCliente.length);
-        */
-        return archivos;
+//        int cantFiles = 0;
+//        FTPFile[] filesCliente = cliente.listFiles(directory);
+//        LinkedList<FTPFile> listFiles = new LinkedList<>();
+//        
+//        for (FTPFile file : filesCliente) if (file.isFile()) listFiles.add(file);
+//        
+//        FTPFile[] archivos = new FTPFile[listFiles.size()];
+//        
+//        for (int i = 0; i < listFiles.size(); i++) archivos[i] = listFiles.get(i);
+//        
+//        System.out.println("Archivos: "  + archivos.length);
+//
+//        /*
+//            Verificar funcionamiento
+//            System.arraycopy(filesCliente, 0, arrayFiles, 0, filesCliente.length);
+//        */
+//        return archivos;
+        return cliente.listFiles(directory, getFilter(Filter.FILES_ONLY));
     }
     
     /**
@@ -318,6 +340,7 @@ public class Accesador {
     }
     
     public FTPFile[] getDirectories() throws IOException{
+        System.out.println("Directorios: " + cliente.listDirectories().length);
         return cliente.listDirectories();
     }
     
