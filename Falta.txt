@@ -1,3 +1,1 @@
 - Borrar, editar y buscar archivos
-
-- Revisar configuraciones de login automatico
