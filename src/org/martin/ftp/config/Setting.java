@@ -53,26 +53,28 @@ public class Setting {
         este vacio
         */
         if (!isAutoLogin) return isAutoLogin;
-            
+        
         firstLine = filter.get();
-        isAutoLogin = Boolean.getBoolean(firstLine.split(": ")[1]);
+        isAutoLogin = Boolean.valueOf(firstLine.split(": ")[1]);
         br.close();
         return isAutoLogin;
     }
     
     public Object[] getSettings() throws FileNotFoundException, IOException{
         
-        Object[] settings = new String[4];
+        Object[] settings = new Object[4];
         br = new BufferedReader(new FileReader(logConfig));
         int cont = 0;
 
         for (Iterator<String> it = br.lines().iterator(); it.hasNext();) {
+            
             String line = it.next();
-            if (!line.isEmpty()) {
-                if(cont == 0) settings[cont] = Boolean.getBoolean(line.split(": ")[1]);
-                else settings[cont] = line.split(": ")[1];
-                cont++;
-            }
+            
+            if(cont == 0) settings[cont] = Boolean.valueOf(line.split(": ")[1]);
+            
+            else settings[cont] = line.split(": ")[1];
+            
+            cont++;
             
         }
         br.close();

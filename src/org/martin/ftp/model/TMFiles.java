@@ -24,8 +24,6 @@ public class TMFiles implements TableModel{
     
     public TMFiles(LinkedList<FTPFile> files) {
         this.files = files;
-        System.out.println(this.files.size());
-        this.files.forEach((file) -> System.out.println(file));
     }
     
     /**

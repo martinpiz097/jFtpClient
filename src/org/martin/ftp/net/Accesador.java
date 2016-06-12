@@ -294,7 +294,6 @@ public class Accesador {
 //        
 //        for (int i = 0; i < listFiles.size(); i++) archivos[i] = listFiles.get(i);
 //        
-//        System.out.println("Archivos: "  + archivos.length);
 //
 //        /*
 //            Verificar funcionamiento

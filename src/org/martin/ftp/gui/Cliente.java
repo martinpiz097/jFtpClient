@@ -45,7 +45,6 @@ public class Cliente extends javax.swing.JFrame {
         gestion.setDefaultCloseOperation(EXIT_ON_CLOSE);
         directorioActual = "/";
         setLocationRelativeTo(null);
-        setResizable(false);
         fileChoos = new JFileChooser();
         fileChoos.addChoosableFileFilter(getAllFileFilter());
         fileChoos.addChoosableFileFilter(getDirectoryFilter());
@@ -60,8 +59,10 @@ public class Cliente extends javax.swing.JFrame {
                         datosUsuario[2].toString(), 
                         datosUsuario[3].toString());
             }
+
+            else show();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            setVisible(true);
         }
     }
 
@@ -291,6 +292,7 @@ public class Cliente extends javax.swing.JFrame {
         );
 
         panelDialog.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(102, 255, 102), null));
+        panelDialog.setPreferredSize(new java.awt.Dimension(404, 65));
 
         txtNewFolder2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -319,7 +321,7 @@ public class Cliente extends javax.swing.JFrame {
                 .addGroup(panelDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(txtNewFolder2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         cuadroNewFolder.getContentPane().add(panelDialog, java.awt.BorderLayout.CENTER);
@@ -551,15 +553,25 @@ public class Cliente extends javax.swing.JFrame {
 
         fileChoos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fileChoos.showOpenDialog(this);
+        File selected = fileChoos.getSelectedFile();
+        File[] files = fileChoos.getSelectedFiles();
         
-        if (fileChoos.getSelectedFile() != null) {
+        if (selected != null || files != null) {
             
-            try {
-                accesador.uploadFile(fileChoos.getSelectedFile(), directorioActual);
-                 updateDirectory();
-            } catch (IOException ex) {
-                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            new Thread(() -> {
+                try {
+                    if (files.length > 0)
+                        for (File file : files)
+                            accesador.uploadFile(file, directorioActual);
+                    
+                    else accesador.uploadFile(selected, directorioActual);
+                    
+                    updateDirectory();
+                } catch (IOException ex) {
+                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }).start();
+                
         }
         
     }//GEN-LAST:event_btnUploadFileActionPerformed
@@ -617,13 +629,13 @@ public class Cliente extends javax.swing.JFrame {
             }
             
             txtNewFolder2.setText(null);
-            cuadroNewFolder.setVisible(false);
+            cuadroNewFolder.hide();
         }
     }//GEN-LAST:event_txtNewFolder2KeyReleased
 
     private void btnAddFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFolderActionPerformed
 
-        cuadroNewFolder.setVisible(true);
+        cuadroNewFolder.show();
         cuadroNewFolder.setLocationRelativeTo(null);
         if (!txtNewFolder2.isFocusable()) txtNewFolder2.requestFocus();
         
@@ -722,7 +734,7 @@ public class Cliente extends javax.swing.JFrame {
                 
                 accesador.setToParentDirectory();
                 updateDirectory();
-                setVisible(false);
+                hide();
                 gestion.setSize(gestion.getPreferredSize());
                 gestion.setLocationRelativeTo(null);
                 gestion.setVisible(true);
@@ -772,7 +784,7 @@ public class Cliente extends javax.swing.JFrame {
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new Cliente().setVisible(true);
+            new Cliente();
         });
     }
 
@@ -810,3 +822,4 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JTextField txtUser;
     // End of variables declaration//GEN-END:variables
 }
+
