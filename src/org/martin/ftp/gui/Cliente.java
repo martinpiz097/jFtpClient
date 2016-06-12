@@ -466,8 +466,20 @@ public class Cliente extends javax.swing.JFrame {
         String server = txtServer.getText();
         String user = txtUser.getText();
         String pass = txtPassword.getText();
+
+        if (server == null) server = "";
+        if (user == null) user = "";
+        
         try {
-            connect(server, user, pass);
+            if (server.isEmpty() || user.isEmpty()) 
+                JOptionPane.showMessageDialog(
+                        this, 
+                        "Por Favor rellene todos los campos", 
+                        "Error", 
+                        JOptionPane.WARNING_MESSAGE);
+            
+            else connect(server, user, pass);
+
         } catch (IOException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }

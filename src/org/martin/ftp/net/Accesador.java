@@ -56,14 +56,6 @@ public class Accesador {
         cliente = new FTPClient();
         cliente.connect(server);
         cliente.login(user, password);
-        cliente.enterRemotePassiveMode();
-        cliente.setFileType(FTP.BINARY_FILE_TYPE);
-        
-        System.out.println(getReplyCode());
-        System.out.println(cliente.getDefaultPort());
-        System.out.println(cliente.printWorkingDirectory());
-        System.out.println(cliente.getPassiveHost());
-        Arrays.stream(cliente.listFiles()).forEach(System.out::println);
     }
 
     private FTPFileFilter getFilter(Filter filter){
@@ -340,7 +332,6 @@ public class Accesador {
     }
     
     public FTPFile[] getDirectories() throws IOException{
-        System.out.println("Directorios: " + cliente.listDirectories().length);
         return cliente.listDirectories();
     }
     
@@ -356,28 +347,27 @@ public class Accesador {
         return cliente.listFiles(directory);
     }
     
-    public HashMap<String, Object> getAll(HashMap<String, Object> lista) throws IOException{
-        
-        if (lista == null) lista = new HashMap();
-            
-        
-        HashMap<String, Object> subList;
-        
-        for (FTPFile file : getFilesAndDirectories()) {
-        
-            if (file.isDirectory()) {
-            
-                subList = new HashMap<>();
-                lista.put(file.getLink(), subList);
-                subList = getAll(subList);
-            }
-            
-            else lista.put(file.getLink(), file);
-            
-        }
-        
-        return lista;
-    }
+//    public HashMap<String, Object> getAll(HashMap<String, Object> lista) throws IOException{
+//        
+//        if (lista == null) lista = new HashMap();
+//
+//        HashMap<String, Object> subList;
+//        
+//        for (FTPFile file : getFilesAndDirectories()) {
+//        
+//            if (file.isDirectory()) {
+//            
+//                subList = new HashMap<>();
+//                lista.put(file.getLink(), subList);
+//                subList = getAll(subList);
+//            }
+//            
+//            else lista.put(file.getLink(), file);
+//            
+//        }
+//        
+//        return lista;
+//    }
     
     /**
      * 
@@ -471,10 +461,6 @@ public class Accesador {
         textoInicial += textoAñadido;
     }
 
-    /*
-    Test
-    */
-    
     public void createDirectory(String ruta, String name) throws IOException{
         cliente.makeDirectory(ruta + "/" + name);
     }
