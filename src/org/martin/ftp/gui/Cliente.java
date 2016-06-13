@@ -21,11 +21,13 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.net.ftp.FTPFile;
-import org.martin.ftp.config.Setting;
 import org.martin.ftp.model.TCRFiles;
 import org.martin.ftp.model.TMFiles;
 import org.martin.ftp.net.Accesador;
 import org.martin.ftp.net.Tester;
+import static org.martin.ftp.config.Encryptor.encrypt;
+import static org.martin.ftp.config.Encryptor.decrypt;
+import org.martin.ftp.config.Setting;
 
 /**
  *
@@ -38,9 +40,11 @@ public class Cliente extends javax.swing.JFrame {
     JFileChooser fileChoos;
     boolean hasInternetConnection;
     boolean isConnectedToHost;
+    // Setting settings;
     Setting settings;
     
     public Cliente() {
+       
         initComponents();
         gestion.setDefaultCloseOperation(EXIT_ON_CLOSE);
         directorioActual = "/";
@@ -53,17 +57,16 @@ public class Cliente extends javax.swing.JFrame {
     
         try {
             settings = new Setting();
-            if (settings.isAutoLogin()) {
-                Object[] datosUsuario = settings.getSettings();
-                connect(datosUsuario[1].toString(), 
-                        datosUsuario[2].toString(), 
-                        datosUsuario[3].toString());
-            }
-
-            else show();
+            if (settings.isAutoLogin()) 
+                connect(settings.getHost(), settings.getUser(), settings.getPassword());
+            else
+                show();
+            
         } catch (IOException ex) {
-            setVisible(true);
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
     }
 
     private FileFilter getDirectoryFilter(){
@@ -731,7 +734,7 @@ public class Cliente extends javax.swing.JFrame {
 
                 if (chkAuto.isSelected()) 
                     settings.setSettings(server, user, pass);
-                
+                    
                 accesador.setToParentDirectory();
                 updateDirectory();
                 hide();
