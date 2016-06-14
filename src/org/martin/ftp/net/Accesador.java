@@ -61,7 +61,7 @@ public class Accesador {
     private FTPFileFilter getFilter(Filter filter){
         
         return (FTPFile ftpf) -> {
-            if (filter == Filter.FILES_ONLY) return !ftpf.isDirectory();
+            if (filter == Filter.FILES_ONLY) return ftpf.isFile();
             
             else if (filter == Filter.DIRECTORIES_ONLY) return true;
             

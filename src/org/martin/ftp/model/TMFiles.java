@@ -7,6 +7,7 @@ package org.martin.ftp.model;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
@@ -56,7 +57,7 @@ public class TMFiles implements TableModel{
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -64,7 +65,9 @@ public class TMFiles implements TableModel{
         
         if (columnIndex == 0) return "Nombre";
         
-        else return "Tamaño";
+        else if(columnIndex == 1) return "Tamaño";
+    
+        else return "Ultima modificacion";
     }
 
     @Override
@@ -85,10 +88,11 @@ public class TMFiles implements TableModel{
 
         FTPFile file = files.get(rowIndex);
         long tamaño = file.getSize();
+        Date timeStamp = file.getTimestamp().getTime();
         
         if (columnIndex == 0) return file.getName();
             
-        else {
+        else if(columnIndex == 1){
             if (tamaño < raise(BYTE_IN_KILOBYTE, 2)) 
                 return nf.format((double) tamaño / 1000) + "kB";
             
@@ -99,6 +103,8 @@ public class TMFiles implements TableModel{
                 return nf.format((double) tamaño / raise(BYTE_IN_KILOBYTE, 3)) + "GB";
             
         }
+        else return timeStamp;
+        
     }
 
     @Override

@@ -7,8 +7,10 @@ package org.martin.ftp.model;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -55,6 +57,7 @@ public class TCRFiles implements TableCellRenderer{
         lbl.setOpaque(true);
         
         return lbl;
+        
     }
     
 }

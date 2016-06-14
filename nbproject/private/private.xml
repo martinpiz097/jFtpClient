@@ -16,8 +16,10 @@
         <group name="examenNasa1">
             <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/config/Encryptor.java</file>
             <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/config/Setting.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/gui/Cliente.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/config/Settings.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/config.xml</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/resources/Searcher.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/net/TypeSearch.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/model/TMFiles.java</file>
         </group>
     </open-files>
 </project-private>
