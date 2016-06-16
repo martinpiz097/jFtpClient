@@ -17,7 +17,6 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
 import org.apache.commons.net.ftp.FTP;
@@ -58,14 +57,16 @@ public class Accesador {
         cliente.login(user, password);
     }
 
-    private FTPFileFilter getFilter(Filter filter){
+    public FTPFileFilter getFilter(Filter filter){
         
         return (FTPFile ftpf) -> {
-            if (filter == Filter.FILES_ONLY) return ftpf.isFile();
-            
-            else if (filter == Filter.DIRECTORIES_ONLY) return true;
-            
-            else return ftpf.isDirectory();
+
+            if (filter != null) {
+                if (filter == Filter.FILES_ONLY) return ftpf.isFile();
+                else if (filter == Filter.DIRECTORIES_ONLY) return ftpf.isDirectory();
+                else return true;
+            }
+            else return true;
         };
     }
     

@@ -2,8 +2,4 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment>Archivo de configuracion de inicio de sesion automatico</comment>
-<entry key="user">martin</entry>
-<entry key="password">ĩĲōŁŐ</entry>
-<entry key="host">localhost</entry>
-<entry key="autolog">true</entry>
 </properties>

@@ -1,1 +1,2 @@
 - Borrar, editar y buscar archivos
+- Agregar combobox para seleccionar mas de un server a conectar

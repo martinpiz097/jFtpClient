@@ -21,13 +21,13 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.net.ftp.FTPFile;
+import org.martin.ftp.config.Encryptor;
 import org.martin.ftp.model.TCRFiles;
 import org.martin.ftp.model.TMFiles;
 import org.martin.ftp.net.Accesador;
 import org.martin.ftp.net.Tester;
-import static org.martin.ftp.config.Encryptor.encrypt;
-import static org.martin.ftp.config.Encryptor.decrypt;
 import org.martin.ftp.config.Setting;
+import org.martin.ftp.config.Utilities;
 
 /**
  *
@@ -124,6 +124,21 @@ public class Cliente extends javax.swing.JFrame {
         panelDialog = new javax.swing.JPanel();
         txtNewFolder2 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
+        uploadOptions = new javax.swing.JDialog();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        btnFolderOption = new javax.swing.JButton();
+        btnFileOption = new javax.swing.JButton();
+        viewConfigs = new javax.swing.JDialog();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        txtMyHost = new javax.swing.JTextField();
+        txtMyUser = new javax.swing.JTextField();
+        txtMyPass = new javax.swing.JTextField();
+        btnSetData = new javax.swing.JButton();
+        btnResetAll = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -138,6 +153,7 @@ public class Cliente extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
 
         gestion.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -210,7 +226,7 @@ public class Cliente extends javax.swing.JFrame {
 
         btnUploadFile.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
         btnUploadFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/martin/ftp/resources/upload.png"))); // NOI18N
-        btnUploadFile.setToolTipText("Subir Archivo");
+        btnUploadFile.setToolTipText("Subir");
         btnUploadFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnUploadFileActionPerformed(evt);
@@ -251,7 +267,7 @@ public class Cliente extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("jButton2");
+        jButton2.setText("Buscar");
 
         javax.swing.GroupLayout gestionLayout = new javax.swing.GroupLayout(gestion.getContentPane());
         gestion.getContentPane().setLayout(gestionLayout);
@@ -333,6 +349,175 @@ public class Cliente extends javax.swing.JFrame {
         );
 
         cuadroNewFolder.getContentPane().add(panelDialog, java.awt.BorderLayout.CENTER);
+
+        uploadOptions.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                uploadOptionsWindowOpened(evt);
+            }
+        });
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(51, 255, 102), null));
+
+        jLabel5.setFont(new java.awt.Font("DejaVu Sans", 1, 18)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("¿Que desea subir?");
+
+        btnFolderOption.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
+        btnFolderOption.setText("Una Carpeta");
+        btnFolderOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFolderOptionActionPerformed(evt);
+            }
+        });
+
+        btnFileOption.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
+        btnFileOption.setText("Un archivo");
+        btnFileOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFileOptionActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(btnFileOption, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnFolderOption, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnFileOption)
+                    .addComponent(btnFolderOption))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout uploadOptionsLayout = new javax.swing.GroupLayout(uploadOptions.getContentPane());
+        uploadOptions.getContentPane().setLayout(uploadOptionsLayout);
+        uploadOptionsLayout.setHorizontalGroup(
+            uploadOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(uploadOptionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        uploadOptionsLayout.setVerticalGroup(
+            uploadOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        viewConfigs.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                viewConfigsWindowOpened(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                viewConfigsWindowClosing(evt);
+            }
+        });
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Configuraciones de Usuario"));
+
+        jLabel8.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        jLabel8.setText("Servidor: ");
+
+        jLabel9.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        jLabel9.setText("Usuario: ");
+
+        jLabel10.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        jLabel10.setText("Contraseña (encriptada): ");
+
+        txtMyHost.setEnabled(false);
+
+        txtMyUser.setEnabled(false);
+
+        txtMyPass.setEnabled(false);
+
+        btnSetData.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        btnSetData.setText("Cambiar Datos");
+        btnSetData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSetDataActionPerformed(evt);
+            }
+        });
+
+        btnResetAll.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        btnResetAll.setText("Reestablecer Todo");
+        btnResetAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetAllActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnResetAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnSetData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtMyPass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                    .addComponent(txtMyUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                    .addComponent(txtMyHost, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(txtMyHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(txtMyUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(txtMyPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSetData)
+                    .addComponent(btnResetAll))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout viewConfigsLayout = new javax.swing.GroupLayout(viewConfigs.getContentPane());
+        viewConfigs.getContentPane().setLayout(viewConfigsLayout);
+        viewConfigsLayout.setHorizontalGroup(
+            viewConfigsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(viewConfigsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        viewConfigsLayout.setVerticalGroup(
+            viewConfigsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(viewConfigsLayout.createSequentialGroup()
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 6, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -441,6 +626,14 @@ public class Cliente extends javax.swing.JFrame {
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Edit");
+
+        jMenuItem3.setText("Ver Configuraciones");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem3);
 
         jMenuItem1.setText("Reestablecer configuraciones");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -559,29 +752,7 @@ public class Cliente extends javax.swing.JFrame {
 
     private void btnUploadFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadFileActionPerformed
 
-        fileChoos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fileChoos.showOpenDialog(this);
-        File selected = fileChoos.getSelectedFile();
-        File[] files = fileChoos.getSelectedFiles();
-        
-        if (selected != null || files != null) {
-            
-            new Thread(() -> {
-                try {
-                    if (files.length > 0)
-                        for (File file : files)
-                            accesador.uploadFile(file, directorioActual);
-                    
-                    else accesador.uploadFile(selected, directorioActual);
-                    
-                    updateDirectory();
-                } catch (IOException ex) {
-                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }).start();
-                
-        }
-        
+        uploadOptions.show();
     }//GEN-LAST:event_btnUploadFileActionPerformed
 
     private void gestionWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_gestionWindowClosing
@@ -679,6 +850,151 @@ public class Cliente extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void uploadOptionsWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_uploadOptionsWindowOpened
+
+        uploadOptions.setSize(uploadOptions.getPreferredSize());
+        uploadOptions.setLocationRelativeTo(gestion);
+        viewConfigs.setResizable(false);
+    }//GEN-LAST:event_uploadOptionsWindowOpened
+
+    private void btnFileOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFileOptionActionPerformed
+
+        uploadOptions.hide();
+        fileChoos.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChoos.showOpenDialog(gestion);
+        File[] selectedFiles = fileChoos.getSelectedFiles();
+        
+        if (selectedFiles != null) {
+            
+            new Thread(() -> {
+                try {
+                    for (File file : selectedFiles)
+                        accesador.uploadFile(file, directorioActual);
+                    
+                    updateDirectory();
+                } catch (IOException ex) {
+                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }).start();
+                
+        }
+        
+    }//GEN-LAST:event_btnFileOptionActionPerformed
+
+    private void btnFolderOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFolderOptionActionPerformed
+
+        uploadOptions.hide();
+        fileChoos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        fileChoos.showOpenDialog(gestion);
+        File[] selectedFiles = fileChoos.getSelectedFiles();
+        
+        if (selectedFiles != null) {
+            
+            new Thread(() -> {
+                try {
+                    for (File file : selectedFiles){
+
+                        if(file.isDirectory()){
+                            accesador.createDirectory(directorioActual, file.getName());
+                            for (File fileIn : file.listFiles()) 
+                                accesador.uploadFile(
+                                        fileIn, accesador.getWorkingDirectory() + "/" + file.getName());
+                            
+                        }
+                        else
+                            accesador.uploadFile(file, directorioActual);
+                    }
+                    updateDirectory();
+                } catch (IOException ex) {
+                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }).start();
+                
+        }
+    }//GEN-LAST:event_btnFolderOptionActionPerformed
+
+    private void viewConfigsWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_viewConfigsWindowOpened
+
+        viewConfigs.setSize(viewConfigs.getPreferredSize());
+        viewConfigs.setLocationRelativeTo(null);
+        viewConfigs.setResizable(false);
+    }//GEN-LAST:event_viewConfigsWindowOpened
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+
+        if (settings.isAutoLogin()) {
+            viewConfigs.show();
+            txtMyHost.setText(settings.getHost());
+            txtMyUser.setText(settings.getUser());
+            txtMyPass.setText(
+                    Utilities.getTransformedPassword(Encryptor.decrypt(settings.getPassword())));
+        }
+        else{
+            JOptionPane.showMessageDialog(this, 
+                    "No existen configuraciones de usuario", 
+                    "Mensaje", 
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void btnSetDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetDataActionPerformed
+
+        try {
+            if (btnSetData.getText().equalsIgnoreCase("Cambiar Datos")) {
+                btnSetData.setText("Confirmar");
+                Utilities.setActivation(txtMyHost, txtMyUser, txtMyPass);
+                txtMyHost.selectAll();
+                txtMyHost.requestFocus();
+            }
+            
+            else{
+                int opcion = JOptionPane.showConfirmDialog(viewConfigs, 
+                        "¿Ha ingresado los datos correctamente?", 
+                        "Confirmacion", 
+                        JOptionPane.YES_NO_OPTION);
+                int opcionSi = JOptionPane.YES_OPTION;
+                
+                if (opcion == opcionSi) {
+                    btnSetData.setText("Cambiar Datos");
+                    settings.setHost(txtMyHost.getText().trim());
+                    settings.setUser(txtMyUser.getText());
+                    settings.setPassword(Encryptor.encrypt(txtMyPass.getText()));
+                    JOptionPane.showMessageDialog(viewConfigs, "Datos modificados exitosamente");
+                    Utilities.disableAll(txtMyHost, txtMyUser, txtMyPass);
+                }
+            }
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_btnSetDataActionPerformed
+
+    private void btnResetAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetAllActionPerformed
+
+        try {
+            settings.deleteSettings();
+            if (Utilities.isActiveComponents(txtMyHost, txtMyUser, txtMyPass))
+                Utilities.disableAll(txtMyHost, txtMyUser, txtMyPass);
+            Utilities.cleanTextFields(txtMyHost, txtMyUser, txtMyPass);
+            
+            if (!btnSetData.getText().equalsIgnoreCase("Cambiar Datos")) 
+                btnSetData.setText("Cambiar Datos");
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+            
+    }//GEN-LAST:event_btnResetAllActionPerformed
+
+    private void viewConfigsWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_viewConfigsWindowClosing
+
+        if (!btnSetData.getText().equalsIgnoreCase("Cambiar Datos")) 
+            btnSetData.setText("Cambiar Datos");
+        
+    }//GEN-LAST:event_viewConfigsWindowClosing
+
     private void updateDirectory() throws IOException{
         
         LinkedList<FTPFile> files = accesador.getOrderedFiles();
@@ -757,6 +1073,8 @@ public class Cliente extends javax.swing.JFrame {
                         JOptionPane.ERROR_MESSAGE);
                 txtServer.selectAll();
                 txtServer.requestFocus();
+                
+                if (settings.isAutoLogin()) show();
             }
         }
         
@@ -800,6 +1118,10 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JButton btnAddFolder;
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnConnect;
+    private javax.swing.JButton btnFileOption;
+    private javax.swing.JButton btnFolderOption;
+    private javax.swing.JButton btnResetAll;
+    private javax.swing.JButton btnSetData;
     private javax.swing.JButton btnUpdateDirectory;
     private javax.swing.JButton btnUploadFile;
     private javax.swing.JCheckBox chkAuto;
@@ -808,27 +1130,39 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel panelDialog;
     private javax.swing.JTable tblFiles;
+    private javax.swing.JTextField txtMyHost;
+    private javax.swing.JTextField txtMyPass;
+    private javax.swing.JTextField txtMyUser;
     private javax.swing.JTextField txtNewDir;
     private javax.swing.JTextField txtNewFolder2;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtServer;
     private javax.swing.JTextField txtUser;
+    private javax.swing.JDialog uploadOptions;
+    private javax.swing.JDialog viewConfigs;
     // End of variables declaration//GEN-END:variables
 }
 
