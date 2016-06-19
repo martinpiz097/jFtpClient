@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JFrame" name="gestion">
       <Events>
@@ -24,6 +24,8 @@
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="btnBack" min="-2" pref="42" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jButton3" min="-2" pref="40" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnUpdateDirectory" min="-2" pref="43" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnUploadFile" min="-2" pref="41" max="-2" attributes="0"/>
@@ -46,16 +48,19 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="btnUploadFile" alignment="1" max="32767" attributes="0"/>
-                      <Component id="btnUpdateDirectory" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnAddFolder" alignment="1" max="32767" attributes="0"/>
-                      <Component id="btnBack" alignment="1" max="32767" attributes="0"/>
-                      <Component id="jButton1" max="32767" attributes="0"/>
-                      <Component id="jButton2" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="btnUploadFile" alignment="1" max="32767" attributes="0"/>
+                          <Component id="btnUpdateDirectory" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnAddFolder" alignment="1" max="32767" attributes="0"/>
+                          <Component id="btnBack" alignment="1" max="32767" attributes="0"/>
+                          <Component id="jButton1" max="32767" attributes="0"/>
+                          <Component id="jButton2" alignment="1" max="32767" attributes="0"/>
+                      </Group>
+                      <Component id="jButton3" alignment="0" min="-2" pref="44" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jPanel3" pref="295" max="32767" attributes="0"/>
+                  <Component id="jPanel3" pref="272" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -101,10 +106,13 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arial" size="14" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Directorio: "/>
+                <Property name="text" type="java.lang.String" value="Directorio actual: "/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtNewDir">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="Si lo desea puede cambiar el directorio actual de trabajo. Cuando termine de escribir la ruta pulse Enter para hacer efectivo el cambio."/>
+              </Properties>
               <Events>
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtNewDirKeyReleased"/>
               </Events>
@@ -251,6 +259,38 @@
             <Property name="text" type="java.lang.String" value="Buscar"/>
           </Properties>
         </Component>
+        <Component class="javax.swing.JButton" name="jButton3">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/org/martin/ftp/resources/home.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Volver a raiz"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+          </Events>
+        </Component>
+        <Menu class="javax.swing.JMenuBar" name="jMenuBar2">
+          <SubComponents>
+            <Menu class="javax.swing.JMenu" name="jMenu3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="File"/>
+              </Properties>
+            </Menu>
+            <Menu class="javax.swing.JMenu" name="jMenu4">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Help"/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="jMenuItem4">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Acerca de..."/>
+                  </Properties>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
+          </SubComponents>
+        </Menu>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JDialog" name="cuadroNewFolder">
@@ -402,7 +442,10 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="DejaVu Sans" size="14" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Una Carpeta"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/org/martin/ftp/resources/uploadFolder1.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Carpetas"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFolderOptionActionPerformed"/>
@@ -413,7 +456,10 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="DejaVu Sans" size="14" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Un archivo"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/org/martin/ftp/resources/uploadFile.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Archivos"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFileOptionActionPerformed"/>

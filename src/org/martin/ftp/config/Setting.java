@@ -47,11 +47,29 @@ public class Setting {
         return Boolean.valueOf(p.getProperty("autolog"));
     }
     
+    public boolean hasSaveConfigs(){
+        
+        return p.getProperty("host") != null || p.getProperty("user") != null ||
+                p.getProperty("password") != null;
+    }
+    
+    public boolean equals(String server, String user, String password){
+        return server.equalsIgnoreCase(getHost()) && user.equalsIgnoreCase(getUser()) && 
+                password.equalsIgnoreCase(getPassword());
+    }
+    
     public void deleteSettings() throws IOException{
         p.clear();
         saveConfigs();
     }
 
+    public void setSettings(boolean autoLogin, String server, String user, String password) throws IOException{
+        setAutologin(autoLogin);
+        setHost(server);
+        setUser(user);
+        setPassword(password);
+    }
+    
     public void setSettings(String server, String user, String password) throws IOException{
         setAutologin(true);
         setHost(server);

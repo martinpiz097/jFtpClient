@@ -35,6 +35,10 @@ public class Accesador {
     private String server;
     private String user;
     private String password;
+
+    public static Accesador getInstance(String server, String user, String password) throws IOException{
+        return new Accesador(server, user, password);
+    }
     
     /**
      * 
@@ -62,9 +66,14 @@ public class Accesador {
         return (FTPFile ftpf) -> {
 
             if (filter != null) {
-                if (filter == Filter.FILES_ONLY) return ftpf.isFile();
-                else if (filter == Filter.DIRECTORIES_ONLY) return ftpf.isDirectory();
-                else return true;
+                switch (filter) {
+                    case FILES_ONLY:
+                        return ftpf.isFile();
+                    case DIRECTORIES_ONLY:
+                        return ftpf.isDirectory();
+                    default:
+                        return true;
+                }
             }
             else return true;
         };
@@ -77,11 +86,15 @@ public class Accesador {
     public void reconnect() throws IOException{
         cliente.connect(server);
         cliente.login(user, password);
-        cliente.enterLocalPassiveMode();
     }
     
     public boolean isConnected(){
         return FTPReply.isPositiveCompletion(cliente.getReplyCode());
+    }
+    
+    public void closeConnection() throws IOException{
+        logout();
+        disconnect();
     }
     
     public void logout() throws IOException{
@@ -194,8 +207,11 @@ public class Accesador {
     /**
      * Se retorna al directorio anterior
      * @throws IOException 
+     * @deprecated  Reemplazado por setToParentDirectory, metodo que realiza
+     * la misma operacion
      */
     
+    @Deprecated
     public void goToBeforeDirectory() throws IOException{
         setWorkingDirectory("..");
     }
@@ -213,6 +229,10 @@ public class Accesador {
         for (String directory : directories) destino += ("/" + directory);
         setWorkingDirectory(destino);
         
+    }
+
+    public void setToRootDirectory() throws IOException{
+        cliente.changeWorkingDirectory("/");
     }
     
     /**
@@ -255,24 +275,7 @@ public class Accesador {
      */
     
     public FTPFile[] getFiles() throws IOException{
-
-        // int cantFiles = 0;
-        // FTPFile[] filesCliente; 
-                
-        
-//        ArrayList<FTPFile> listFiles = new ArrayList<>();
-//        
-//        for (FTPFile file : filesCliente) if (file.isFile()) listFiles.add(file);
-//        
-//        FTPFile[] archivos = new FTPFile[listFiles.size()];
-//        
-//        for (int i = 0; i < listFiles.size(); i++) archivos[i] = listFiles.get(i);
-//        
-//        /*
-//            Verificar funcionamiento
-//            System.arraycopy(filesCliente, 0, arrayFiles, 0, filesCliente.length);
-//        */
-        return cliente.listFiles(getWorkingDirectory(), getFilter(Filter.FILES_ONLY));
+        return getFiles(getWorkingDirectory());
     }
     
     /**
