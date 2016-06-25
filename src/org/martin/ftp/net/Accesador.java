@@ -8,6 +8,7 @@ package org.martin.ftp.net;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,8 +18,10 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -59,6 +62,7 @@ public class Accesador {
         cliente = new FTPClient();
         cliente.connect(server);
         cliente.login(user, password);
+        cliente.enterLocalActiveMode();
     }
 
     public FTPFileFilter getFilter(Filter filter){
@@ -286,14 +290,14 @@ public class Accesador {
      * @throws IOException 
      */
     
+    private int increaseCounter(int counter){
+        return counter+1;
+    }
+    
     public FTPFile[] getFiles(String directory) throws IOException{
 
-//        int cantFiles = 0;
-//        FTPFile[] filesCliente = cliente.listFiles(directory);
-//        LinkedList<FTPFile> listFiles = new LinkedList<>();
-//        
-//        for (FTPFile file : filesCliente) if (file.isFile()) listFiles.add(file);
-//        
+        return cliente.listFiles(directory, getFilter(Filter.FILES_ONLY));
+        
 //        FTPFile[] archivos = new FTPFile[listFiles.size()];
 //        
 //        for (int i = 0; i < listFiles.size(); i++) archivos[i] = listFiles.get(i);
@@ -304,7 +308,7 @@ public class Accesador {
 //            System.arraycopy(filesCliente, 0, arrayFiles, 0, filesCliente.length);
 //        */
 //        return archivos;
-        return cliente.listFiles(directory, getFilter(Filter.FILES_ONLY));
+        
     }
     
     /**
@@ -475,6 +479,7 @@ public class Accesador {
         cliente.setFileType(FTP.BINARY_FILE_TYPE);
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
         cliente.storeFile(f.getName(), bis);
+        System.out.println(cliente.getReplyString());
         bis.close();
     }
     
@@ -483,6 +488,21 @@ public class Accesador {
         cliente.setFileType(FTP.BINARY_FILE_TYPE);
         FileOutputStream fos = new FileOutputStream(new File(destiny + "/" + name));
         cliente.retrieveFile(name, fos);    
+    }
+    
+    public void delete(FTPFile file, Type type) throws IOException{
+        
+        String path = getWorkingDirectory() + "/" + file.getName();
+        
+        if (type == Type.FILE) 
+            cliente.deleteFile(path);
+        else
+            cliente.removeDirectory(path);
+    }
+    
+    public void rename(FTPFile file, String newName, Type type) throws IOException{
+     
+        cliente.rename(file.getName(), newName);
     }
     
 }

@@ -7,10 +7,8 @@ package org.martin.ftp.model;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -23,9 +21,15 @@ import org.apache.commons.net.ftp.FTPFile;
 public class TCRFiles implements TableCellRenderer{
 
     private LinkedList<FTPFile> files;
-
+    private int foundFileIndex;
+    
     public TCRFiles(LinkedList<FTPFile> files) {
         this.files = files;
+        foundFileIndex = -1;
+    }
+
+    public void paintFoundFile(int index){
+        foundFileIndex = index;
     }
     
     @Override
@@ -51,7 +55,9 @@ public class TCRFiles implements TableCellRenderer{
         Color bg = lbl.getBackground();
         
         if (isSelected) lbl.setBackground(Color.CYAN);
-            
+        
+        else if(row == foundFileIndex) lbl.setBackground(Color.RED);
+        
         else lbl.setBackground(bg);
         
         lbl.setOpaque(true);

@@ -37,8 +37,11 @@ public class UpdatesReviewer {
     public UpdatesReviewer() throws IOException {
         tester = new File("version.xml");
         p = new Properties();
+        if(!tester.exists()) saveInfo(tester, p);
+        
+        else loadInfo(tester, p);
+        
         onlineFileProperties = new Properties();
-        loadInfo(tester, p);
     }
     
     public boolean hasNewVersion() throws IOException, MalformedURLException{
@@ -50,6 +53,8 @@ public class UpdatesReviewer {
         URL url = new URL("https://github.com/martinpiz097/jFtpClient/version.xml");
         System.out.println(url.openConnection().getContentType());
         currentVersionContent = new File("version.xml");
+        if(!currentVersionContent.exists()) currentVersionContent.createNewFile();
+        
         BufferedWriter bw = new BufferedWriter(new FileWriter(currentVersionContent));
         BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
         br.lines().forEach((line) -> {
@@ -81,6 +86,6 @@ public class UpdatesReviewer {
     
     public void saveInfo(File file, Properties p) throws IOException{
         os = new FileOutputStream(file);
-        p.storeToXML(os, "Archivo de configuracion de inicio de sesion automatico");
+        p.storeToXML(os, "Archivo de informacion del software");
     }
 }

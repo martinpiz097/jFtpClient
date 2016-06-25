@@ -34,6 +34,17 @@ public class TMFiles implements TableModel{
      * @return resultado de la potencia
      */
     
+    public int getIndex(String name){
+        
+        int index = -1;
+        
+        for (int i = 0; i < files.size(); i++) {
+            if(files.get(i).getName().equalsIgnoreCase(name))
+                return i;
+        }
+        return index;
+    }
+    
     private long raise(int number, int numberOfTimes){
         
         for (int i = 1; i < numberOfTimes; i++) 

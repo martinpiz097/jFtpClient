@@ -53,6 +53,10 @@ public class Setting {
                 p.getProperty("password") != null;
     }
     
+    public boolean hasIconConfigSaved(){
+        return p.getProperty("icon") != null;
+    }
+    
     public boolean equals(String server, String user, String password){
         return server.equalsIgnoreCase(getHost()) && user.equalsIgnoreCase(getUser()) && 
                 password.equalsIgnoreCase(getPassword());
@@ -70,11 +74,27 @@ public class Setting {
         setPassword(password);
     }
     
+    public void setSettings(boolean autoLogin, String server, String user, String password, String path) throws IOException{
+        setAutologin(autoLogin);
+        setHost(server);
+        setUser(user);
+        setPassword(password);
+        setIcon(path);
+    }
+    
     public void setSettings(String server, String user, String password) throws IOException{
         setAutologin(true);
         setHost(server);
         setUser(user);
         setPassword(password);
+    }
+    
+    public void setSettings(String server, String user, String password, String path) throws IOException{
+        setAutologin(true);
+        setHost(server);
+        setUser(user);
+        setPassword(password);
+        setIcon(path);
     }
     
     public void setAutologin(boolean autoLogin) throws IOException{
@@ -106,6 +126,15 @@ public class Setting {
     
     public void setPassword(String newPassword) throws IOException{
         p.setProperty("password", encrypt(newPassword));
+        saveConfigs();
+    }
+    
+    public String getIcon(){
+        return p.getProperty("icon");
+    }
+    
+    public void setIcon(String path) throws IOException{
+        p.setProperty("icon", path);
         saveConfigs();
     }
     

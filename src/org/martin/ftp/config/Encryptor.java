@@ -5,7 +5,6 @@
  */
 package org.martin.ftp.config;
 
-import sun.security.provider.MD5;
 
 /**
  *

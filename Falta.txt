@@ -1,5 +1,9 @@
-- Borrar, editar y buscar archivos
+- Borrar y editar archivos
 - Agregar combobox para seleccionar mas de un server a conectar
 
 - En el metodo listFiles y listFiles(directory) que retornan arreglos
 cambiar forma de busqueda con lambda o solucionar el tema del filter
+
+- Corregir problemas al subir archivos
+
+- Agregar ventana para renombrar archivos

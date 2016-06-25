@@ -10,5 +10,5 @@ package org.martin.ftp.net;
  * @author martin
  */
 public enum Type {
-    FILE, DIRECTORY;
+    FILE, DIRECTORY, ALL_TYPES;
 }
