@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTable;
+import org.apache.commons.net.ftp.FTPFile;
 import org.martin.ftp.model.TCRSearch;
 import org.martin.ftp.model.TMSearch;
 
@@ -22,7 +23,8 @@ public class Searcher {
     private final Accesador accesador;
     private final JTable resultsTable;
     private static Searcher searcher;
-    
+    private LinkedList<FileFiltering> resultsList;
+   
     public static Searcher getInstance(Accesador accesador, JTable resultsTable){
         
         if (searcher == null) 
@@ -37,22 +39,23 @@ public class Searcher {
     
     public void search(String filter) throws IOException{
         
-        LinkedList<FileFiltering> resultsList = new LinkedList<>();
-        startSearch(resultsList, accesador.getWorkingDirectory(), filter);
+        resultsList = new LinkedList<>();
+        startSearch(accesador.getWorkingDirectory(), filter);
+        showResults();
     }
     
-    private void startSearch(LinkedList<FileFiltering> list, String directory, String filter) throws IOException{
-        
-        accesador.toList(directory).stream().forEach((file) -> {
+    private void startSearch(String directory, String filter) throws IOException{
+    
+        LinkedList<FTPFile> listSearch = accesador.toList(directory);
+        listSearch.stream().forEach((file) -> {
         
             if(file.getName().contains(filter)) {
-                list.add(new FileFiltering(directory, file));
-                addResult(list);
+                resultsList.add(new FileFiltering(directory, file));
             }
             
             if (file.isDirectory()) {
                 try {
-                    startSearch(list, directory + "/" + file.getName(), filter);
+                    startSearch(directory + "/" + file.getName(), filter);
                 } catch (IOException ex) {
                     Logger.getLogger(Searcher.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -60,11 +63,10 @@ public class Searcher {
         });
     }
     
-    private void addResult(LinkedList<FileFiltering> resultsList){
+    public void showResults(){
         
         if (resultsTable.getRowHeight() != 25) resultsTable.setRowHeight(25);
         resultsTable.setModel(new TMSearch(resultsList));
         resultsTable.setDefaultRenderer(Object.class, new TCRSearch(resultsList));
-        resultsTable.updateUI();
     }
 }

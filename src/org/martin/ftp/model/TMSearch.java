@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import org.martin.ftp.config.Utilities;
 import org.martin.ftp.net.FileFiltering;
 
 /**
@@ -109,7 +110,7 @@ public class TMSearch implements TableModel{
                     return nf.format((double) tamaño / raise(BYTE_IN_KILOBYTE, 3)) + "GB";
                 
             case 2: 
-                return timeStamp;
+                return Utilities.getDateToString(timeStamp);
             
             default:
                 return file.getParentDir();

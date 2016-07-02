@@ -5,6 +5,9 @@
  */
 package org.martin.ftp.config;
 
+import java.awt.Component;
+import java.awt.Window;
+import java.util.Date;
 import javax.swing.JTextField;
 
 /**
@@ -13,6 +16,8 @@ import javax.swing.JTextField;
  */
 public class Utilities {
 
+    private static final String ZERO = "0";
+    
     public static String getTransformedPassword(String passw){
         
         String transformedPassw = "";
@@ -122,4 +127,31 @@ public class Utilities {
 //        System.out.println(newPath);
 //        return newPath;
 //    }
+
+    public static String getDateToString(Date d){
+        
+        String day = String.valueOf(d.getDate());
+        String month = String.valueOf(d.getMonth());
+        String year = String.valueOf(d.getYear() + 1900);
+        String hours = String.valueOf(d.getHours());
+        String minutes = String.valueOf(d.getMinutes());
+        String seconds = String.valueOf(d.getSeconds());
+        String slash = "/";
+        String doublePoints = ":";
+        
+        if (d.getDate() < 10) day = ZERO + day;
+        if (d.getMonth() < 10) month = ZERO + month;
+        if (d.getHours() < 10) hours = ZERO + hours;
+        if (d.getMinutes() < 10) minutes = ZERO + minutes;
+        if (d.getSeconds() < 10) seconds = ZERO + seconds;
+        
+        return day + slash + month + slash + year + "  " + 
+                hours + doublePoints + minutes + doublePoints + seconds;
+    }
+    
+    public static void openWindow(Window window, Component objectiveLocation){
+        window.setSize(window.getPreferredSize());
+        window.setLocationRelativeTo(objectiveLocation);
+        window.show();
+    }
 }

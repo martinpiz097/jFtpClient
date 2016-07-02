@@ -8,9 +8,9 @@ package org.martin.ftp.net;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,10 +18,13 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -38,7 +41,8 @@ public class Accesador {
     private String server;
     private String user;
     private String password;
-
+    
+    
     public static Accesador getInstance(String server, String user, String password) throws IOException{
         return new Accesador(server, user, password);
     }
@@ -94,6 +98,11 @@ public class Accesador {
     
     public boolean isConnected(){
         return FTPReply.isPositiveCompletion(cliente.getReplyCode());
+    }
+    
+    public boolean existsFile(String name, String path) throws IOException{
+        return Arrays.stream(getFilesAndDirectories(path)).anyMatch(
+                (file) -> file.getName().equalsIgnoreCase(name));
     }
     
     public void closeConnection() throws IOException{
@@ -281,6 +290,51 @@ public class Accesador {
     public FTPFile[] getFiles() throws IOException{
         return getFiles(getWorkingDirectory());
     }
+
+    /**
+     * Metodo utilizado para sumar contadores
+     * a través de métodos
+     * @param counter variable contador
+     * @return el valor de la variable más 1
+     * Ej: Si el contador vale 4, el retorno será
+     * 5
+     */
+    
+    private int increaseCounter(int counter){
+        return counter+1;
+    }
+
+    /**
+     * Metodo que devuelve el nombre de un archivo o 
+     * carpeta desde su ruta
+     * @param path Ruta del archivo
+     * @return Nombre del archivo solicitado
+     */
+    
+    private String getFileName(String path){
+        String[] split = path.split("/");
+        return split[split.length-1];
+    }
+
+    /**
+     * Método que retorna la ruta de la carpeta padre
+     * del archivo entregado, para esto
+     * solo entregaremos la ruta de éste
+     * @param filePath Ruta del archivo solicitado
+     * @return Ruta de la carpeta padre de éste
+     */
+    
+    private String getParentFolder(String filePath){
+        
+        String[] split = filePath.split("/");
+        int cantSlashs = split.length-1;
+        String pathParentFolder = "";
+        
+        for (int i = 0; i < cantSlashs; i++) 
+            pathParentFolder+=(split[i]) + "/";
+        
+        return pathParentFolder;
+    }
     
     /**
      * Metodo que entrega un array con solo los archivos de un directorio
@@ -289,10 +343,6 @@ public class Accesador {
      * @return Array de archivos del directorio;
      * @throws IOException 
      */
-    
-    private int increaseCounter(int counter){
-        return counter+1;
-    }
     
     public FTPFile[] getFiles(String directory) throws IOException{
 
@@ -464,7 +514,6 @@ public class Accesador {
     }
     
     private void addText(String textoInicial, String textoAñadido){
-        
         textoInicial += textoAñadido;
     }
 
@@ -481,6 +530,20 @@ public class Accesador {
         cliente.storeFile(f.getName(), bis);
         System.out.println(cliente.getReplyString());
         bis.close();
+    }
+    
+    public void uploadFolder(File folder, String remotePath) throws IOException{
+        
+        createDirectory(remotePath, folder.getName());
+        String newPath = remotePath + "/" + folder.getName();
+        
+        for (File file : folder.listFiles())
+            if(file.isDirectory()) uploadFolder(file, newPath);
+            else uploadFile(file, newPath);
+    
+    }
+    public void uploadFolder(File folder) throws IOException{
+        uploadFolder(folder, getWorkingDirectory());
     }
     
     public void downloadFile(String name, String destiny) throws IOException{
@@ -505,4 +568,49 @@ public class Accesador {
         cliente.rename(file.getName(), newName);
     }
     
+    private void extractFile(FileOutputStream fos, ZipEntry entry,
+         int ready, byte[] buffer, ZipInputStream zis) throws FileNotFoundException, IOException{
+         fos = new FileOutputStream(entry.getName());
+         ready = 0;
+         buffer = new byte[1024];
+         while ((ready = zis.read(buffer)) > 0)
+            fos.write(buffer, 0, ready);
+         fos.close();
+         zis.closeEntry();
+    }
+    
+    public void uploadZipFile(File file) throws FileNotFoundException, IOException{
+
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(file));
+        LinkedList<File> filesIn = new LinkedList<>();
+
+        FileOutputStream fos = null;
+        int ready = 0;
+        byte[] buffer = null;
+        HashMap<String, Boolean> entryNames = new HashMap<>();
+        // Extraccion de archivos   
+        ZipEntry entry;
+        while ((entry = zis.getNextEntry()) != null) {            
+            extractFile(fos, entry, ready, buffer, zis);
+            entryNames.put(entry.getName(), entry.isDirectory());
+        }
+        zis.close();
+        // Extraccion de archivos
+        
+        // Añadir archivos a la lista para su posterior subida y eliminacion local
+        
+        File f;
+        
+        for (Iterator<Map.Entry<String, Boolean>> it = entryNames.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Boolean> next = it.next();
+            f = new File(file.getAbsolutePath() + "/" + next.getKey());
+            if (next.getValue())
+                uploadFolder(f, getWorkingDirectory());
+            else
+                uploadFile(f, getWorkingDirectory());
+            f.delete();
+        } 
+        
+        // Añadir archivos a la lista para su posterior subida y eliminacion local
+    }
 }

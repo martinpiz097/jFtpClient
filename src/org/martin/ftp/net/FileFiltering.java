@@ -23,7 +23,8 @@ public class FileFiltering {
     }
 
     public String getPath(){
-        
+    
+        System.out.println(file.getLink());
         if (file.isDirectory()) return parentDir + file.getName();
         else return parentDir;
     }

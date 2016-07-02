@@ -15,11 +15,7 @@
         </group>
         <group name="red"/>
         <group name="jFTP">
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/config/Side.java</file>
             <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/gui/Cliente.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/net/Searcher.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/net/Accesador.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/config/Utilities.java</file>
         </group>
     </open-files>
 </project-private>

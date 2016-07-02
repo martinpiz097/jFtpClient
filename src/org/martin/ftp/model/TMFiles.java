@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.apache.commons.net.ftp.FTPFile;
+import org.martin.ftp.config.Utilities;
 
 /**
  *
@@ -101,20 +102,21 @@ public class TMFiles implements TableModel{
         long tamaño = file.getSize();
         Date timeStamp = file.getTimestamp().getTime();
         
-        if (columnIndex == 0) return file.getName();
-            
-        else if(columnIndex == 1){
-            if (tamaño < raise(BYTE_IN_KILOBYTE, 2)) 
-                return nf.format((double) tamaño / 1000) + "kB";
-            
-            else if (tamaño < raise(BYTE_IN_KILOBYTE, 3)) 
-                return nf.format((double) tamaño / raise(BYTE_IN_KILOBYTE, 2)) + "MB";
-            
-            else 
-                return nf.format((double) tamaño / raise(BYTE_IN_KILOBYTE, 3)) + "GB";
-            
+        switch (columnIndex) {
+            case 0:
+                return file.getName();
+            case 1:
+                if (tamaño < raise(BYTE_IN_KILOBYTE, 2))
+                    return nf.format((double) tamaño / 1000) + "kB";
+                
+                else if (tamaño < raise(BYTE_IN_KILOBYTE, 3))
+                    return nf.format((double) tamaño / raise(BYTE_IN_KILOBYTE, 2)) + "MB";
+                
+                else
+                    return nf.format((double) tamaño / raise(BYTE_IN_KILOBYTE, 3)) + "GB";
+            default:
+                return Utilities.getDateToString(timeStamp);
         }
-        else return timeStamp;
         
     }
 
