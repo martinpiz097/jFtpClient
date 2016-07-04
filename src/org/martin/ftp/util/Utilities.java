@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.martin.ftp.config;
+package org.martin.ftp.util;
 
 import java.awt.Component;
 import java.awt.Window;
@@ -153,5 +153,17 @@ public class Utilities {
         window.setSize(window.getPreferredSize());
         window.setLocationRelativeTo(objectiveLocation);
         window.show();
+    }
+
+    public static String getFormat(String fileName){
+        
+        if(!fileName.contains(".")) return ".a";
+        String[] split = fileName.split(".");
+        System.out.println(split == null);
+        System.out.println(split.length);
+        for (String string : split) {
+            System.out.println(string);
+        }
+        return split[split.length-1];
     }
 }

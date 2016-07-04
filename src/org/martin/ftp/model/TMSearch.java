@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import org.martin.ftp.config.Utilities;
+import org.martin.ftp.util.Utilities;
 import org.martin.ftp.net.FileFiltering;
 
 /**

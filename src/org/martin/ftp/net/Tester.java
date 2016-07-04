@@ -29,10 +29,10 @@ public class Tester {
     
         System.out.println(host);
         try {
-            return new Socket(host, 80).isConnected();
+            return new Socket(host, 21).isConnected();
         } catch (IOException ex) {
             try {
-                return new Socket(host, 21).isConnected();
+                return new Socket(host, 80).isConnected();
             } catch (IOException ex1) {
                 return false;
             }

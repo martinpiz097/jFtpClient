@@ -20,19 +20,19 @@ import org.martin.ftp.model.TMSearch;
  */
 public class Searcher {
 
-    private final Accesador accesador;
+    private final FTPLinker accesador;
     private final JTable resultsTable;
     private static Searcher searcher;
     private LinkedList<FileFiltering> resultsList;
    
-    public static Searcher getInstance(Accesador accesador, JTable resultsTable){
+    public static Searcher getInstance(FTPLinker accesador, JTable resultsTable){
         
         if (searcher == null) 
             searcher = new Searcher(accesador, resultsTable);
         return searcher;
     }
      
-    public Searcher(Accesador accesador, JTable resultsTable) {
+    public Searcher(FTPLinker accesador, JTable resultsTable) {
         this.accesador = accesador;
         this.resultsTable = resultsTable;
     }

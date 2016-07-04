@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 import org.apache.commons.net.ftp.FTPFile;
-import org.martin.ftp.net.Accesador;
+import org.martin.ftp.net.FTPLinker;
 
 /**
  *
@@ -19,9 +19,9 @@ import org.martin.ftp.net.Accesador;
  */
 public class LMFiles implements ListModel<String>{
 
-    private Accesador accesador;
+    private FTPLinker accesador;
 
-    public LMFiles(Accesador accesador) {
+    public LMFiles(FTPLinker accesador) {
         this.accesador = accesador;
     }
 

@@ -23,29 +23,31 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.net.ftp.FTPFile;
-import org.martin.ftp.config.Encryptor;
+import org.martin.ftp.util.Encryptor;
 import org.martin.ftp.model.TCRFiles;
 import org.martin.ftp.model.TMFiles;
-import org.martin.ftp.net.Accesador;
+import org.martin.ftp.net.FTPLinker;
 import org.martin.ftp.net.Tester;
 import org.martin.ftp.config.Setting;
-import org.martin.ftp.config.Utilities;
+import org.martin.ftp.util.Utilities;
 import org.martin.ftp.model.TMSearch;
 import org.martin.ftp.net.FileFiltering;
 import org.martin.ftp.net.Searcher;
 import org.martin.ftp.updates.UpdatesReviewer;
+import org.martin.ftp.util.Computer;
 import org.martin.ftp.util.FilterSelector;
-import static org.martin.ftp.config.Utilities.openWindow;
+import org.martin.ftp.util.SortOption;
+import static org.martin.ftp.util.Utilities.openWindow;
 
 /**
  *
  * @author martin
  */
-public class Cliente extends javax.swing.JFrame {
+public class Client extends javax.swing.JFrame {
 
     final String pathIconFolder = "/org/martin/ftp/resources/folderMain.png";
     final String pathIconCloud = "/org/martin/ftp/resources/cloud1.png";
-    Accesador accesador;
+    FTPLinker accesador;
     String directorioActual;
     JFileChooser fileChoos;
     boolean hasInternetConnection;
@@ -56,9 +58,10 @@ public class Cliente extends javax.swing.JFrame {
     Searcher searcher;
     Thread tSearcher;
     Thread tUploader;
+    int selectedIndex;
     
-    public Cliente() {
-        
+    public Client() {
+
         threadsUploaders = new LinkedList<>();
 //        try {
 //            reviewer = new UpdatesReviewer();
@@ -75,7 +78,8 @@ public class Cliente extends javax.swing.JFrame {
         fileChoos.setMultiSelectionEnabled(true);
         setResizable(false);
         dialogNewFolder.setSize(dialogNewFolder.getPreferredSize());
-    
+        dialogFileOptions.setResizable(false);
+        dialogUploadOptions.setResizable(false);
         try {
             settings = new Setting();
 
@@ -95,7 +99,7 @@ public class Cliente extends javax.swing.JFrame {
             }
             
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         
@@ -170,6 +174,11 @@ public class Cliente extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        cboOrderOption = new javax.swing.JComboBox<>();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        cboOrderType = new javax.swing.JComboBox<>();
+        btnOrderFiles = new javax.swing.JButton();
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
@@ -354,7 +363,7 @@ public class Cliente extends javax.swing.JFrame {
         });
 
         btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/martin/ftp/resources/search2.png"))); // NOI18N
-        btnSearch.setToolTipText("Buscar");
+        btnSearch.setToolTipText("Buscar archivos y/o directorios");
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSearchActionPerformed(evt);
@@ -366,6 +375,32 @@ public class Cliente extends javax.swing.JFrame {
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
+            }
+        });
+
+        cboOrderOption.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        cboOrderOption.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre", "Tamaño", "Fecha", "Tipo", "Formato" }));
+        cboOrderOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboOrderOptionActionPerformed(evt);
+            }
+        });
+
+        jLabel13.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        jLabel13.setText("Ordenar elementos por: ");
+
+        jLabel14.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        jLabel14.setText("Orden: ");
+
+        cboOrderType.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        cboOrderType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ascendente", "Descendente" }));
+
+        btnOrderFiles.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
+        btnOrderFiles.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/martin/ftp/resources/orderFiles.png"))); // NOI18N
+        btnOrderFiles.setToolTipText("Ordenar");
+        btnOrderFiles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOrderFilesActionPerformed(evt);
             }
         });
 
@@ -415,9 +450,12 @@ public class Cliente extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(formManagementLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(formManagementLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(formManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(formManagementLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
                         .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -428,11 +466,20 @@ public class Cliente extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAddFolder, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)))
-                .addContainerGap())
+                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(formManagementLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cboOrderOption, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cboOrderType, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(btnOrderFiles, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
         );
         formManagementLayout.setVerticalGroup(
             formManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -440,17 +487,26 @@ public class Cliente extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(formManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(formManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(btnUploadFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnUpdateDirectory, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAddFolder, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                .addGroup(formManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(formManagementLayout.createSequentialGroup()
+                        .addGroup(formManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(formManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(btnUploadFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnUpdateDirectory, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAddFolder, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(formManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel13)
+                            .addComponent(cboOrderOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14)
+                            .addComponent(cboOrderType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(btnOrderFiles))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -891,7 +947,7 @@ public class Cliente extends javax.swing.JFrame {
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtNewName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         dialogRename.getContentPane().add(jPanel9, java.awt.BorderLayout.CENTER);
@@ -952,6 +1008,8 @@ public class Cliente extends javax.swing.JFrame {
                 .addContainerGap(55, Short.MAX_VALUE))
         );
 
+        dialogSearchLoader.setMinimumSize(new java.awt.Dimension(316, 216));
+        dialogSearchLoader.setPreferredSize(new java.awt.Dimension(316, 240));
         dialogSearchLoader.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 dialogSearchLoaderWindowOpened(evt);
@@ -1154,7 +1212,7 @@ public class Cliente extends javax.swing.JFrame {
             else connect(server, user, pass);
 
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnConnectActionPerformed
 
@@ -1175,7 +1233,7 @@ public class Cliente extends javax.swing.JFrame {
 
         String text = txtUser.getText();
         
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_TAB){ 
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER){ 
             
             if (!text.trim().isEmpty()) txtUser.setText(text.trim());
                 
@@ -1206,7 +1264,7 @@ public class Cliente extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) try {
             setWorkingDirectory();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }//GEN-LAST:event_tblFilesMouseReleased
@@ -1221,7 +1279,7 @@ public class Cliente extends javax.swing.JFrame {
                     accesador.setWorkingDirectory(dir);
                     updateTable();
                 } catch (IOException ex) {
-                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         
@@ -1237,7 +1295,7 @@ public class Cliente extends javax.swing.JFrame {
             accesador.logout();
             accesador.disconnect();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_formManagementWindowClosing
 
@@ -1246,7 +1304,7 @@ public class Cliente extends javax.swing.JFrame {
         try {
             updateTable();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnUpdateDirectoryActionPerformed
 
@@ -1255,7 +1313,7 @@ public class Cliente extends javax.swing.JFrame {
             accesador.setToParentDirectory();
             updateTable();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnBackActionPerformed
 
@@ -1264,7 +1322,7 @@ public class Cliente extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) try {
             setWorkingDirectory();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_tblFilesKeyPressed
 
@@ -1280,7 +1338,7 @@ public class Cliente extends javax.swing.JFrame {
                     accesador.createDirectory(directorioActual, nameFolder);
                     updateTable();
                 } catch (IOException ex) {
-                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             
@@ -1303,7 +1361,7 @@ public class Cliente extends javax.swing.JFrame {
             restoreConfigs();
             JOptionPane.showMessageDialog(this, "Configuraciones reestablecidas");
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -1332,7 +1390,7 @@ public class Cliente extends javax.swing.JFrame {
             
             else closeSession();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -1358,7 +1416,7 @@ public class Cliente extends javax.swing.JFrame {
                                 accesador.uploadFile(file, directorioActual);
                         updateTable();
                     } catch (IOException ex) {
-                        Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 });
                 t.start();
@@ -1388,7 +1446,7 @@ public class Cliente extends javax.swing.JFrame {
                     }
                     updateTable();
                 } catch (IOException ex) {
-                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
             tUploader.start();
@@ -1447,7 +1505,7 @@ public class Cliente extends javax.swing.JFrame {
             }
             
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_btnSetDataActionPerformed
@@ -1465,7 +1523,7 @@ public class Cliente extends javax.swing.JFrame {
                 btnSetData.setText("Cambiar Datos");
             
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
             
             
@@ -1483,7 +1541,7 @@ public class Cliente extends javax.swing.JFrame {
             accesador.setToRootDirectory();
             updateTable();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -1504,7 +1562,7 @@ public class Cliente extends javax.swing.JFrame {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
@@ -1520,7 +1578,7 @@ public class Cliente extends javax.swing.JFrame {
             FTPFile selected = getSelectedFile();
             downloadFile(selected);
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnDownloadFileActionPerformed
 
@@ -1537,7 +1595,7 @@ public class Cliente extends javax.swing.JFrame {
             updateTable();
             dialogFileOptions.hide();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnDeleteFileActionPerformed
 
@@ -1549,7 +1607,7 @@ public class Cliente extends javax.swing.JFrame {
             updateTable();
             dialogFileOptions.hide();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnRenameFileActionPerformed
 
@@ -1564,12 +1622,11 @@ public class Cliente extends javax.swing.JFrame {
                 tSearcher = new Thread(() -> {
                     btnCancelSearch.setEnabled(true);
                     openWindow(dialogSearchLoader, formSearch);
-                    dialogSearchLoader.setResizable(false);
                     txtSearchFilter.setEnabled(false);
                     try {
                         Searcher.getInstance(accesador, tblSearch).search(filter);
                     } catch (IOException ex) {
-                        Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     dialogSearchLoader.hide();
                     JOptionPane.showMessageDialog(formSearch, "Busqueda Finalizada");
@@ -1598,14 +1655,15 @@ public class Cliente extends javax.swing.JFrame {
             
             if (!text.isEmpty()) {
                 try {
-                    FTPFile selected = getSelectedFile();
-                    accesador.rename(selected, text.trim(), org.martin.ftp.net.Type.FILE);
+                    FTPFile selected = getFile(selectedIndex);
+                    accesador.rename(selected, text.trim());
+                    updateTable();
                     JOptionPane.showMessageDialog(dialogFileOptions, "Archivo renombrado exitosamente");
-                    dialogRename.hide();
                 } catch (IOException ex) {
-                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            dialogRename.hide();
         }
     }//GEN-LAST:event_txtNewNameKeyReleased
 
@@ -1614,7 +1672,7 @@ public class Cliente extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) try {
             goToFile();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_tblSearchKeyPressed
 
@@ -1623,7 +1681,7 @@ public class Cliente extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) try {
             goToFile();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }//GEN-LAST:event_tblSearchMouseReleased
@@ -1652,7 +1710,7 @@ public class Cliente extends javax.swing.JFrame {
             
             else closeSession();
         } catch (IOException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
@@ -1701,7 +1759,7 @@ public class Cliente extends javax.swing.JFrame {
                 lblFolderIcon.setBackground(Color.CYAN);
                 dialogSetIcon.hide();
             } catch (IOException ex) {
-                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         }        
         else{
@@ -1719,7 +1777,7 @@ public class Cliente extends javax.swing.JFrame {
                 lblCloudIcon.setBackground(Color.CYAN);
                 dialogSetIcon.hide();
             } catch (IOException ex) {
-                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         else{
@@ -1760,7 +1818,7 @@ public class Cliente extends javax.swing.JFrame {
                         try {
                             accesador.uploadZipFile(file);
                         } catch (IOException ex) {
-                            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -1800,6 +1858,23 @@ public class Cliente extends javax.swing.JFrame {
         cancelSearch();
     }//GEN-LAST:event_dialogSearchLoaderWindowClosing
 
+    private void cboOrderOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboOrderOptionActionPerformed
+
+        for (SortOption value : SortOption.values()) {
+            System.out.println(value);
+        }
+    }//GEN-LAST:event_cboOrderOptionActionPerformed
+
+    private void btnOrderFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrderFilesActionPerformed
+
+        int indexOrderOption = cboOrderOption.getSelectedIndex();
+        int indexOrderType = cboOrderType.getSelectedIndex();
+        LinkedList<FTPFile> modelList = ((TMFiles)tblFiles.getModel()).getFiles();
+        Computer.orderRemoteFiles(
+                modelList, SortOption.values()[indexOrderOption], SortOption.values()[indexOrderType+5]);
+        tblFiles.update(tblFiles.getGraphics());
+    }//GEN-LAST:event_btnOrderFilesActionPerformed
+
     private void updateTable() throws IOException{
         
         LinkedList<FTPFile> files = accesador.getOrderedFiles();
@@ -1813,7 +1888,8 @@ public class Cliente extends javax.swing.JFrame {
     
     private void setWorkingDirectory() throws IOException{
         FTPFile selected = getSelectedFile();
-
+        selectedIndex = tblFiles.getSelectedRow();
+        
         if (selected.isDirectory()) {
             accesador.setWorkingDirectory(directorioActual + "/" + selected.getName());
             updateTable();
@@ -1848,7 +1924,7 @@ public class Cliente extends javax.swing.JFrame {
         
         if (isConnectedToHost) {
             
-            accesador = new Accesador(server, user, pass);
+            accesador = new FTPLinker(server, user, pass);
             
             if (accesador.isConnected()) {
                 
@@ -1891,6 +1967,11 @@ public class Cliente extends javax.swing.JFrame {
         }
         
         else {
+
+            if(!isVisible()){
+                show();
+            }
+            
             JOptionPane.showMessageDialog(this,
                     "Error de conexion, servidor desconocido",
                     "Error",
@@ -1935,6 +2016,7 @@ public class Cliente extends javax.swing.JFrame {
         formManagement.setVisible(false);
         setVisible(true);
         txtServer.requestFocus();
+        tblSearch.setModel(new TMSearch(new LinkedList<>()));
     }
     
     private void downloadFile(FTPFile selected) throws IOException{
@@ -1948,8 +2030,11 @@ public class Cliente extends javax.swing.JFrame {
     }
     
     private FTPFile getSelectedFile(){
-        TMFiles model = (TMFiles) tblFiles.getModel();
-        return model.getFile(tblFiles.getSelectedRow());
+        return ((TMFiles) tblFiles.getModel()).getFile(tblFiles.getSelectedRow());
+    }
+    
+    private FTPFile getFile(int index){
+        return ((TMFiles) tblFiles.getModel()).getFile(index);
     }
     
     private FileFiltering getSelectedFileFound(){
@@ -1997,12 +2082,12 @@ public class Cliente extends javax.swing.JFrame {
             /* Set the Nimbus look and feel */
             javax.swing.UIManager.setLookAndFeel(new javax.swing.plaf.nimbus.NimbusLookAndFeel());
         } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new Cliente();
+            new Client();
         });
     }
 
@@ -2017,6 +2102,7 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JButton btnDownloadFile1;
     private javax.swing.JButton btnFileOption;
     private javax.swing.JButton btnFolderOption;
+    private javax.swing.JButton btnOrderFiles;
     private javax.swing.JButton btnRenameFile;
     private javax.swing.JButton btnResetAll;
     private javax.swing.JButton btnSearch;
@@ -2024,6 +2110,8 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JButton btnUpdateDirectory;
     private javax.swing.JButton btnUploadFile;
     private javax.swing.JButton btnZipOption;
+    private javax.swing.JComboBox<String> cboOrderOption;
+    private javax.swing.JComboBox<String> cboOrderType;
     private javax.swing.JCheckBox chkAuto;
     private javax.swing.JDialog dialogFileOptions;
     private javax.swing.JDialog dialogNewFolder;
@@ -2040,6 +2128,8 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

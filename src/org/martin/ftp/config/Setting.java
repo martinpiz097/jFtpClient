@@ -10,8 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-import static org.martin.ftp.config.Encryptor.encrypt;
-import static org.martin.ftp.config.Encryptor.decrypt;
+import static org.martin.ftp.util.Encryptor.encrypt;
+import static org.martin.ftp.util.Encryptor.decrypt;
 
 /**
  *

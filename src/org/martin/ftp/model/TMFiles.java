@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.apache.commons.net.ftp.FTPFile;
-import org.martin.ftp.config.Utilities;
+import org.martin.ftp.util.Utilities;
 
 /**
  *
@@ -56,6 +56,10 @@ public class TMFiles implements TableModel{
 
     public LinkedList<FTPFile> getFiles(){
         return files;
+    }
+    
+    public void setFiles(LinkedList<FTPFile> files){
+        this.files = files;
     }
     
     public FTPFile getFile(int index){

@@ -15,7 +15,14 @@
         </group>
         <group name="red"/>
         <group name="jFTP">
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/gui/Cliente.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/gui/Client.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/util/RemoteComparator.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/util/Utilities.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/net/FTPLinker.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/util/LocalComparator.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/net/Searcher.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/model/TMFiles.java</file>
+            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/util/SortOption.java</file>
         </group>
     </open-files>
 </project-private>

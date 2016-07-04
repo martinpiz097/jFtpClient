@@ -30,21 +30,24 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.commons.net.ftp.FTPReply;
+import org.martin.ftp.util.Computer;
+import org.martin.ftp.util.SortOption;
 
 /**
  *
  * @author martin
  */
-public class Accesador {
+public class FTPLinker {
     
     private FTPClient cliente;
     private String server;
     private String user;
     private String password;
-    
-    
-    public static Accesador getInstance(String server, String user, String password) throws IOException{
-        return new Accesador(server, user, password);
+    private static FTPLinker ftpLinker;
+        
+    public static FTPLinker getInstance(String server, String user, String password) throws IOException{
+        if(ftpLinker == null) ftpLinker = new FTPLinker(server, user, password);
+        return ftpLinker;
     }
     
     /**
@@ -56,7 +59,7 @@ public class Accesador {
      * @throws IOException Excepcion si hay problemas de conexion
      */
     
-    public Accesador(String server, String user, String password) throws IOException {
+    public FTPLinker(String server, String user, String password) throws IOException {
    
         this.server = server;
         this.user = user;
@@ -116,6 +119,31 @@ public class Accesador {
     
     public void disconnect() throws IOException{
         cliente.disconnect();
+    }
+
+    /**
+     * Ordena lista de archivos de acuerdo a los criterios especificados
+     * @param files Lista a ordenar
+     * @param option Criterio de ordenamiento(nombre, tamaño, formato, etc)
+     * @param order Orden: ascendente o descendente;
+     */
+    
+    public void orderFiles(LinkedList<FTPFile> files, SortOption option, SortOption order){
+        Computer.orderRemoteFiles(files, option, order);
+    }
+    
+    /**
+     * Entrega una lista equivalente a la lista entregada pero con los objetos ordenados
+     * segun los criterios definidos
+     * @param files Lista a ordenar
+     * @param option Criterio de ordenamiento(nombre, tamaño, formato, etc)
+     * @param order Orden: ascendente o descendente;
+     * @return Lista entregada como parametro pero con los elementos ya ordenados
+     */
+    
+    public LinkedList<FTPFile> getOrderedFiles(LinkedList<FTPFile> files, SortOption option, SortOption order){
+        Computer.orderRemoteFiles(files, option, order);
+        return files;
     }
     
     /**
@@ -518,7 +546,8 @@ public class Accesador {
     }
 
     public void createDirectory(String ruta, String name) throws IOException{
-        cliente.makeDirectory(ruta + "/" + name);
+        if (ruta.endsWith("/")) cliente.makeDirectory(ruta + name);
+        else cliente.makeDirectory(ruta + "/" + name);
     }
     
     public void uploadFile(File f, String directory) throws IOException{
@@ -563,9 +592,9 @@ public class Accesador {
             cliente.removeDirectory(path);
     }
     
-    public void rename(FTPFile file, String newName, Type type) throws IOException{
-     
+    public void rename(FTPFile file, String newName) throws IOException{
         cliente.rename(file.getName(), newName);
+        System.out.println(getReplyCode());
     }
     
     private void extractFile(FileOutputStream fos, ZipEntry entry,

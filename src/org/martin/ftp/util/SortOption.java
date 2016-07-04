@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.martin.ftp.config;
+package org.martin.ftp.util;
 
 /**
  *
  * @author martin
  */
-public enum Side {
+public enum SortOption {
     
-    RIGHT, LEFT;
+    NAME, SIZE, DATE, TYPE, FORMAT, UPWARD, FALLING;
 }
