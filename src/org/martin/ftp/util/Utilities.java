@@ -7,7 +7,10 @@ package org.martin.ftp.util;
 
 import java.awt.Component;
 import java.awt.Window;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.JTextField;
 
 /**
@@ -16,7 +19,7 @@ import javax.swing.JTextField;
  */
 public class Utilities {
 
-    private static final String ZERO = "0";
+    private static final char ZERO = '0';
     
     public static String getTransformedPassword(String passw){
         
@@ -154,16 +157,44 @@ public class Utilities {
         window.setLocationRelativeTo(objectiveLocation);
         window.show();
     }
+//    
+//    private static boolean hasNullElements(String[] array){
+//        return Arrays.stream(array).allMatch((s) -> s == null);
+//    }
+//    
+//    private static boolean hasNullElements(LinkedList<String> list){
+//        return list.stream().allMatch((s) -> s == null);
+//    }
 
+    private static LinkedList<String> split(String str, char limit){
+        
+        LinkedList<String> list = new LinkedList<>();
+        char currentChar;
+        int currentListIndex = 0;
+        
+        for (int i = 0; i < str.length(); i++) {
+
+            if(i == 0) list.add("");
+            
+            currentChar = str.charAt(i);
+            System.out.println(currentChar);
+            
+            if (currentChar != limit) 
+                list.set(currentListIndex, list.get(currentListIndex) + currentChar);
+            
+            else{
+                list.add("");
+                currentListIndex++;
+            }
+        }
+        
+        return list;
+    }
+    
     public static String getFormat(String fileName){
         
         if(!fileName.contains(".")) return ".a";
-        String[] split = fileName.split(".");
-        System.out.println(split == null);
-        System.out.println(split.length);
-        for (String string : split) {
-            System.out.println(string);
-        }
-        return split[split.length-1];
+        LinkedList<String> split = split(fileName, '.');
+        return split.get(split.size()-1);
     }
 }

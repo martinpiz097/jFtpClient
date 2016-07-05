@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +48,7 @@ public class Client extends javax.swing.JFrame {
 
     final String pathIconFolder = "/org/martin/ftp/resources/folderMain.png";
     final String pathIconCloud = "/org/martin/ftp/resources/cloud1.png";
-    FTPLinker accesador;
+    FTPLinker linker;
     String directorioActual;
     JFileChooser fileChoos;
     boolean hasInternetConnection;
@@ -80,6 +81,8 @@ public class Client extends javax.swing.JFrame {
         dialogNewFolder.setSize(dialogNewFolder.getPreferredSize());
         dialogFileOptions.setResizable(false);
         dialogUploadOptions.setResizable(false);
+        dialogSearchLoader.setSize(dialogSearchLoader.getPreferredSize());
+        dialogSearchLoader.setResizable(false);
         try {
             settings = new Setting();
 
@@ -311,9 +314,6 @@ public class Client extends javax.swing.JFrame {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 tblFilesKeyPressed(evt);
             }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                tblFilesKeyReleased(evt);
-            }
         });
         jScrollPane2.setViewportView(tblFiles);
 
@@ -380,11 +380,6 @@ public class Client extends javax.swing.JFrame {
 
         cboOrderOption.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
         cboOrderOption.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre", "Tamaño", "Fecha", "Tipo", "Formato" }));
-        cboOrderOption.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboOrderOptionActionPerformed(evt);
-            }
-        });
 
         jLabel13.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
         jLabel13.setText("Ordenar elementos por: ");
@@ -1251,10 +1246,6 @@ public class Client extends javax.swing.JFrame {
             btnConnect.doClick();
     }//GEN-LAST:event_txtPasswordKeyReleased
 
-    private void tblFilesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblFilesKeyReleased
-        
-    }//GEN-LAST:event_tblFilesKeyReleased
-
     private void tblFilesMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblFilesMouseReleased
 
         if (evt.getButton() == 3) {
@@ -1276,7 +1267,7 @@ public class Client extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) 
             if (!dir.isEmpty()) {
                 try {
-                    accesador.setWorkingDirectory(dir);
+                    linker.setWorkingDirectory(dir);
                     updateTable();
                 } catch (IOException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -1292,8 +1283,8 @@ public class Client extends javax.swing.JFrame {
     private void formManagementWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formManagementWindowClosing
 
         try {
-            accesador.logout();
-            accesador.disconnect();
+            linker.logout();
+            linker.disconnect();
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1310,7 +1301,7 @@ public class Client extends javax.swing.JFrame {
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         try {
-            accesador.setToParentDirectory();
+            linker.setToParentDirectory();
             updateTable();
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -1335,7 +1326,7 @@ public class Client extends javax.swing.JFrame {
             
             if(!nameFolder.isEmpty()){
                 try {
-                    accesador.createDirectory(directorioActual, nameFolder);
+                    linker.createDirectory(directorioActual, nameFolder);
                     updateTable();
                 } catch (IOException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -1413,7 +1404,7 @@ public class Client extends javax.swing.JFrame {
                     try {
                         for (File file : selectedFiles)
                             if(file.isFile())
-                                accesador.uploadFile(file, directorioActual);
+                                linker.uploadFile(file, directorioActual);
                         updateTable();
                     } catch (IOException ex) {
                         Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -1439,10 +1430,10 @@ public class Client extends javax.swing.JFrame {
                 try {
                     for (File file : selectedFiles){
                         if(file.isDirectory())
-                            accesador.uploadFolder(file, accesador.getWorkingDirectory());
+                            linker.uploadFolder(file, linker.getWorkingDirectory());
                         
                         else
-                            accesador.uploadFile(file, directorioActual);
+                            linker.uploadFile(file, directorioActual);
                     }
                     updateTable();
                 } catch (IOException ex) {
@@ -1538,7 +1529,7 @@ public class Client extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
-            accesador.setToRootDirectory();
+            linker.setToRootDirectory();
             updateTable();
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -1591,7 +1582,7 @@ public class Client extends javax.swing.JFrame {
 
         try {
             FTPFile selected = getSelectedFile();
-            accesador.delete(selected, org.martin.ftp.net.Type.FILE);
+            linker.delete(selected, org.martin.ftp.net.Type.FILE);
             updateTable();
             dialogFileOptions.hide();
         } catch (IOException ex) {
@@ -1621,17 +1612,18 @@ public class Client extends javax.swing.JFrame {
                 
                 tSearcher = new Thread(() -> {
                     btnCancelSearch.setEnabled(true);
-                    openWindow(dialogSearchLoader, formSearch);
+                    dialogSearchLoader.show();
+                    dialogSearchLoader.setLocationRelativeTo(formSearch);
                     txtSearchFilter.setEnabled(false);
                     try {
-                        Searcher.getInstance(accesador, tblSearch).search(filter);
+                        Searcher.getInstance(linker, tblSearch).search(filter);
                     } catch (IOException ex) {
                         Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     dialogSearchLoader.hide();
-                    JOptionPane.showMessageDialog(formSearch, "Busqueda Finalizada");
                     txtSearchFilter.setEnabled(true);
                     btnCancelSearch.setEnabled(false);
+                    JOptionPane.showMessageDialog(formSearch, "Busqueda Finalizada");
                 });
                 tSearcher.start();
             }
@@ -1656,7 +1648,7 @@ public class Client extends javax.swing.JFrame {
             if (!text.isEmpty()) {
                 try {
                     FTPFile selected = getFile(selectedIndex);
-                    accesador.rename(selected, text.trim());
+                    linker.rename(selected, text.trim());
                     updateTable();
                     JOptionPane.showMessageDialog(dialogFileOptions, "Archivo renombrado exitosamente");
                 } catch (IOException ex) {
@@ -1816,7 +1808,7 @@ public class Client extends javax.swing.JFrame {
                 for (File file : selectedFiles) {
                     if (file.getName().endsWith(".zip")) {
                         try {
-                            accesador.uploadZipFile(file);
+                            linker.uploadZipFile(file);
                         } catch (IOException ex) {
                             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -1842,12 +1834,7 @@ public class Client extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUserFocusLost
 
     private void dialogSearchLoaderWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_dialogSearchLoaderWindowOpened
-
-        ImageIcon img = new javax.swing.ImageIcon(
-                getClass().getResource("/org/martin/ftp/resources/searching1.gif"));
-        lblSearching.setIcon(img);
-        img.setImageObserver(lblSearching);
-        
+       ((ImageIcon) lblSearching.getIcon()).setImageObserver(lblSearching);
     }//GEN-LAST:event_dialogSearchLoaderWindowOpened
 
     private void btnCancelSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelSearchActionPerformed
@@ -1858,27 +1845,24 @@ public class Client extends javax.swing.JFrame {
         cancelSearch();
     }//GEN-LAST:event_dialogSearchLoaderWindowClosing
 
-    private void cboOrderOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboOrderOptionActionPerformed
-
-        for (SortOption value : SortOption.values()) {
-            System.out.println(value);
-        }
-    }//GEN-LAST:event_cboOrderOptionActionPerformed
-
     private void btnOrderFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrderFilesActionPerformed
 
-        int indexOrderOption = cboOrderOption.getSelectedIndex();
-        int indexOrderType = cboOrderType.getSelectedIndex();
+        try {
+            Arrays.stream(linker.getNames()).forEach(System.out::println);
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        SortOption option = SortOption.values()[cboOrderOption.getSelectedIndex()];
+        SortOption order = SortOption.values()[cboOrderType.getSelectedIndex()+5];
         LinkedList<FTPFile> modelList = ((TMFiles)tblFiles.getModel()).getFiles();
-        Computer.orderRemoteFiles(
-                modelList, SortOption.values()[indexOrderOption], SortOption.values()[indexOrderType+5]);
+        linker.orderFiles(modelList, option, order);
         tblFiles.update(tblFiles.getGraphics());
     }//GEN-LAST:event_btnOrderFilesActionPerformed
 
     private void updateTable() throws IOException{
         
-        LinkedList<FTPFile> files = accesador.getOrderedFiles();
-        directorioActual = accesador.getWorkingDirectory();
+        LinkedList<FTPFile> files = linker.getOrderedFiles();
+        directorioActual = linker.getWorkingDirectory();
         txtNewDir.setText(directorioActual);
 
         if (tblFiles.getRowHeight() != 25) tblFiles.setRowHeight(25);
@@ -1891,7 +1875,7 @@ public class Client extends javax.swing.JFrame {
         selectedIndex = tblFiles.getSelectedRow();
         
         if (selected.isDirectory()) {
-            accesador.setWorkingDirectory(directorioActual + "/" + selected.getName());
+            linker.setWorkingDirectory(directorioActual + "/" + selected.getName());
             updateTable();
         }
         else {
@@ -1924,9 +1908,9 @@ public class Client extends javax.swing.JFrame {
         
         if (isConnectedToHost) {
             
-            accesador = new FTPLinker(server, user, pass);
+            linker = new FTPLinker(server, user, pass);
             
-            if (accesador.isConnected()) {
+            if (linker.isConnected()) {
                 
                 if (chkAuto.isSelected()) 
                     settings.setSettings(server, user, pass);
@@ -1951,12 +1935,13 @@ public class Client extends javax.swing.JFrame {
                 
                 if(!settings.hasSaveConfigs())
                     clearComponents(txtServer, txtUser, txtPassword);
+                
             }
             
             else {
                 JOptionPane.showMessageDialog(this,
                         "Error de conexion, uno o mas datos invalidos\nCodigo de error: " +
-                                accesador.getReplyCode(),
+                                linker.getReplyCode(),
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 txtServer.selectAll();
@@ -2011,8 +1996,8 @@ public class Client extends javax.swing.JFrame {
     private void closeSession() throws IOException{
         tblFiles.setModel(new DefaultTableModel());
         txtNewDir.setText(null);
-        accesador.closeConnection();
-        accesador = null;
+        linker.closeConnection();
+        linker = null;
         formManagement.setVisible(false);
         setVisible(true);
         txtServer.requestFocus();
@@ -2025,7 +2010,7 @@ public class Client extends javax.swing.JFrame {
           File directory = fileChoos.getSelectedFile();
           
           if (directory != null)
-              accesador.downloadFile(selected.getName(), directory.getPath());
+              linker.downloadFile(selected.getName(), directory.getPath());
           
     }
     
@@ -2048,12 +2033,12 @@ public class Client extends javax.swing.JFrame {
         FileFiltering selected = getSelectedFileFound();
         
         if (selected.getFile().isDirectory()) {
-            accesador.setWorkingDirectory(selected.getPath());
+            linker.setWorkingDirectory(selected.getPath());
             System.out.println(selected.getPath());
             updateTable();
         }
         else{
-            accesador.setWorkingDirectory(selected.getParentDir());
+            linker.setWorkingDirectory(selected.getParentDir());
             updateTable();
             TCRFiles renderer = (TCRFiles) tblFiles.getDefaultRenderer(Object.class);
             TMFiles model = (TMFiles) tblFiles.getModel();
@@ -2073,8 +2058,8 @@ public class Client extends javax.swing.JFrame {
             tSearcher = null;
         }
         btnCancelSearch.setEnabled(false);
-        Searcher.getInstance(accesador, tblSearch).showResults();
-        
+        Searcher.getInstance(linker, tblSearch).showResults();
+        txtSearchFilter.setEnabled(true);
     }
     
     public static void main(String args[]) {

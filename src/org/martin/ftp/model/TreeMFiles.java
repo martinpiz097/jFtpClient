@@ -9,6 +9,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import org.apache.commons.net.ftp.FTPFile;
+import org.martin.ftp.net.FTPLinker;
 
 /**
  *
@@ -17,11 +18,15 @@ import org.apache.commons.net.ftp.FTPFile;
 public class TreeMFiles implements TreeModel {
 
     private FTPFile root;
+    private FTPLinker linker;
+    private String currentParent;
 
-    public TreeMFiles(FTPFile root) {
+    public TreeMFiles(FTPFile root, FTPLinker linker, String currentParent) {
         this.root = root;
+        this.linker = linker;
+        this.currentParent = currentParent;
     }
-    
+
     @Override
     public Object getRoot() {
         return root;
@@ -29,7 +34,8 @@ public class TreeMFiles implements TreeModel {
 
     @Override
     public Object getChild(Object parent, int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+        return null;
     }
 
     @Override

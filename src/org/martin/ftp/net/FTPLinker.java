@@ -39,16 +39,16 @@ import org.martin.ftp.util.SortOption;
  */
 public class FTPLinker {
     
-    private FTPClient cliente;
+    private FTPClient client;
     private String server;
     private String user;
     private String password;
     private static FTPLinker ftpLinker;
         
-    public static FTPLinker getInstance(String server, String user, String password) throws IOException{
-        if(ftpLinker == null) ftpLinker = new FTPLinker(server, user, password);
-        return ftpLinker;
-    }
+//    public static FTPLinker getInstance(String server, String user, String password) throws IOException{
+//        if(ftpLinker == null) ftpLinker = new FTPLinker(server, user, password);
+//        return ftpLinker;
+//    }
     
     /**
      * 
@@ -66,10 +66,10 @@ public class FTPLinker {
         this.password = password;
         if (this.password == null) this.password = "";
         
-        cliente = new FTPClient();
-        cliente.connect(server);
-        cliente.login(user, password);
-        cliente.enterLocalActiveMode();
+        client = new FTPClient();
+        client.connect(server);
+        client.login(user, password);
+        client.enterLocalActiveMode();
     }
 
     public FTPFileFilter getFilter(Filter filter){
@@ -91,21 +91,25 @@ public class FTPLinker {
     }
     
     public String getReplyCode(){
-        return cliente.getReplyString();
+        return client.getReplyString();
     }
     
     public void reconnect() throws IOException{
-        cliente.connect(server);
-        cliente.login(user, password);
+        client.connect(server);
+        client.login(user, password);
     }
     
     public boolean isConnected(){
-        return FTPReply.isPositiveCompletion(cliente.getReplyCode());
+        return FTPReply.isPositiveCompletion(client.getReplyCode());
     }
     
     public boolean existsFile(String name, String path) throws IOException{
         return Arrays.stream(getFilesAndDirectories(path)).anyMatch(
                 (file) -> file.getName().equalsIgnoreCase(name));
+    }
+    
+    public boolean existsFile(String name) throws IOException{
+        return existsFile(name, getWorkingDirectory());
     }
     
     public void closeConnection() throws IOException{
@@ -114,11 +118,11 @@ public class FTPLinker {
     }
     
     public void logout() throws IOException{
-        cliente.logout();
+        client.logout();
     }
     
     public void disconnect() throws IOException{
-        cliente.disconnect();
+        client.disconnect();
     }
 
     /**
@@ -145,14 +149,42 @@ public class FTPLinker {
         Computer.orderRemoteFiles(files, option, order);
         return files;
     }
+
+    /**
+     * Retorna una lista del directorio actual ordenada según los criterios dados
+     * @param option Criterio de ordenamiento(nombre, tamaño, formato, etc)
+     * @param order Orden: ascendente o descendente;
+     * @return Lista ordenada según los criterios de ordenamiento
+     * @throws IOException En caso de haber problemas al acceder a los archivos
+     */
+    
+    public LinkedList<FTPFile> getOrderedFiles(SortOption option, SortOption order) throws IOException{
+        return getOrderedFiles(getWorkingDirectory());
+    }
     
     /**
-     * 
+     * Retorna una lista del directorio dado ordenada según los criterios dados
+     * @param directory Ruta del directorio
+     * @param option Criterio de ordenamiento(nombre, tamaño, formato, etc)
+     * @param order Orden: ascendente o descendente;
+     * @return Lista ordenada según los criterios de ordenamiento
+     * @throws IOException En caso de haber problemas al acceder a los archivos
+     */
+    
+    public LinkedList<FTPFile> getOrderedFiles(String directory, SortOption option, SortOption order) throws IOException{
+        
+        LinkedList<FTPFile> files = getOrderedFiles(directory);
+        return getOrderedFiles(files, option, order);
+    }
+    
+    /**
+     * Retorna una lista ordenada a partir de otra ya entrega, el resultado
+     * es una nueva lista en la que se agrupan primero los directorios
+     * y luego los archivos
      * @param files Lista a ordenar
      * @return Lista de archivos y carpetas creadas a partir 
      * del parametro, se ubican primero las carpetas y luego los
      * archivos
-     * 
      */
     
     public LinkedList<FTPFile> getOrdererFiles(LinkedList<FTPFile> files){
@@ -166,8 +198,8 @@ public class FTPLinker {
     }
     
     /**
-     * 
-     * @param directory El directorio del cual se desea 
+     * Retorna una lista de archivos del directorio especificado
+     * @param directory Ruta del directorio del cual se desea 
      * obtener la lista
      * @return Lista de archivos y carpetas creadas a partir 
      * del parametro, se ubican primero las carpetas y luego los
@@ -184,7 +216,8 @@ public class FTPLinker {
     }
     
     /**
-     * 
+     * Retorna una lista con los archivos y carpetas de la ruta actual ordenados
+     * primero por directorios y luego los archivos
      * @return Lista que contiene los archivos y carpetas de la ruta actual, 
      * ubicando primero las carpetas y luego los archivos
      * @throws IOException 
@@ -203,8 +236,8 @@ public class FTPLinker {
      * @return El objeto FTPClient actual
      */
     
-    public FTPClient getCliente() {
-        return cliente;
+    public FTPClient getClient() {
+        return client;
     }
     
     /**
@@ -233,7 +266,8 @@ public class FTPLinker {
      */
     
     public void setWorkingDirectory(String directorio) throws IOException{
-        cliente.changeWorkingDirectory(directorio);
+        client.cwd(directorio);
+        //client.changeWorkingDirectory(directorio);
     }
     
     /**
@@ -242,7 +276,7 @@ public class FTPLinker {
      */
     
     public void setToParentDirectory() throws IOException{
-        cliente.changeToParentDirectory();
+        client.changeToParentDirectory();
     }
     
     /**
@@ -273,7 +307,7 @@ public class FTPLinker {
     }
 
     public void setToRootDirectory() throws IOException{
-        cliente.changeWorkingDirectory("/");
+        client.changeWorkingDirectory("/");
     }
     
     /**
@@ -284,7 +318,7 @@ public class FTPLinker {
      */
 
     public String getWorkingDirectory() throws IOException{
-        return cliente.printWorkingDirectory();
+        return client.printWorkingDirectory();
     }
     
     /**
@@ -308,6 +342,13 @@ public class FTPLinker {
         return resultado;
     }
 
+    public String[] getNames(String directory) throws IOException{
+        return client.listNames(directory);
+    }
+    
+    public String[] getNames() throws IOException{
+        return getNames(getWorkingDirectory());
+    }
     
     /**
      * Metodo que obtiene un array con solo los archivos del actual directorio
@@ -374,7 +415,7 @@ public class FTPLinker {
     
     public FTPFile[] getFiles(String directory) throws IOException{
 
-        return cliente.listFiles(directory, getFilter(Filter.FILES_ONLY));
+        return client.listFiles(directory, getFilter(Filter.FILES_ONLY));
         
 //        FTPFile[] archivos = new FTPFile[listFiles.size()];
 //        
@@ -417,19 +458,19 @@ public class FTPLinker {
     }
     
     public FTPFile[] getDirectories() throws IOException{
-        return cliente.listDirectories();
+        return client.listDirectories();
     }
     
     public FTPFile[] getDirectories(String directory) throws IOException{
-        return cliente.listDirectories(directory);
+        return client.listDirectories(directory);
     }
     
     public FTPFile[] getFilesAndDirectories() throws IOException{
-        return cliente.listFiles();
+        return client.listFiles();
     }
     
     public FTPFile[] getFilesAndDirectories(String directory) throws IOException{
-        return cliente.listFiles(directory);
+        return client.listFiles(directory);
     }
     
 //    public HashMap<String, Object> getAll(HashMap<String, Object> lista) throws IOException{
@@ -546,18 +587,18 @@ public class FTPLinker {
     }
 
     public void createDirectory(String ruta, String name) throws IOException{
-        if (ruta.endsWith("/")) cliente.makeDirectory(ruta + name);
-        else cliente.makeDirectory(ruta + "/" + name);
+        if (ruta.endsWith("/")) client.makeDirectory(ruta + name);
+        else client.makeDirectory(ruta + "/" + name);
     }
     
     public void uploadFile(File f, String directory) throws IOException{
         
         // URL url = new URL("ftp://" + user + ":" + password + "@" + server + directory);
         // Se trabaja con cualquier tipo de archivo
-        cliente.setFileType(FTP.BINARY_FILE_TYPE);
+        client.setFileType(FTP.BINARY_FILE_TYPE);
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
-        cliente.storeFile(f.getName(), bis);
-        System.out.println(cliente.getReplyString());
+        client.storeFile(f.getName(), bis);
+        System.out.println(client.getReplyString());
         bis.close();
     }
     
@@ -577,9 +618,9 @@ public class FTPLinker {
     
     public void downloadFile(String name, String destiny) throws IOException{
 
-        cliente.setFileType(FTP.BINARY_FILE_TYPE);
+        client.setFileType(FTP.BINARY_FILE_TYPE);
         FileOutputStream fos = new FileOutputStream(new File(destiny + "/" + name));
-        cliente.retrieveFile(name, fos);    
+        client.retrieveFile(name, fos);    
     }
     
     public void delete(FTPFile file, Type type) throws IOException{
@@ -587,13 +628,13 @@ public class FTPLinker {
         String path = getWorkingDirectory() + "/" + file.getName();
         
         if (type == Type.FILE) 
-            cliente.deleteFile(path);
+            client.deleteFile(path);
         else
-            cliente.removeDirectory(path);
+            client.removeDirectory(path);
     }
     
     public void rename(FTPFile file, String newName) throws IOException{
-        cliente.rename(file.getName(), newName);
+        client.rename(file.getName(), newName);
         System.out.println(getReplyCode());
     }
     
