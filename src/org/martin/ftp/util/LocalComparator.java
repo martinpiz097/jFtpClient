@@ -33,16 +33,32 @@ public class LocalComparator implements Comparator<File>{
                     return (int) (o1.lastModified() - o2.lastModified());
                 
                 else
-                    return (int) (o1.lastModified() - o2.lastModified());
-                    
+                    return (int) (o2.lastModified() - o1.lastModified());
+                
             case FORMAT:
                 String file1Format = Utilities.getFormat(o1.getName());
                 String file2Format = Utilities.getFormat(o2.getName());
                 if(order == SortOption.UPWARD)
-                    return file1Format.compareToIgnoreCase(file2Format);
+                    if (o1.isDirectory() || o2.isDirectory()) {
+                        if (o1.isDirectory() && o2.isDirectory()) 
+                            return idDirectory - idDirectory;
+                        else if (o1.isDirectory() && !o2.isDirectory())
+                            return idDirectory - idFile;
+                        else return idFile - idDirectory;
+                    }
+                    else
+                        return file1Format.compareToIgnoreCase(file2Format);
                 else
-                    return file2Format.compareToIgnoreCase(file1Format);
-
+                    if (o1.isDirectory() || o2.isDirectory()) {
+                        if (o1.isDirectory() && o2.isDirectory()) 
+                            return idDirectory - idDirectory;
+                        else if (o1.isDirectory() && !o2.isDirectory())
+                            return idFile - idDirectory;
+                        else return idDirectory - idFile;
+                    }
+                    else
+                        return file2Format.compareToIgnoreCase(file1Format);
+                    
             case NAME:
                 if(order == SortOption.UPWARD)
                     return o1.getName().compareToIgnoreCase(o2.getName());
@@ -56,13 +72,19 @@ public class LocalComparator implements Comparator<File>{
                     return (int) (o2.length() - o1.length());
 
             case TYPE:
+                if ((o1.isDirectory() && o2.isDirectory()) || (!o1.isDirectory() && !o2.isDirectory())) 
+                        return idDirectory - idDirectory;
                 
                 if (order == SortOption.UPWARD)
-                    return String.valueOf(o1.isDirectory()).compareToIgnoreCase(String.valueOf(o2.isDirectory()));
+                    if(o1.isDirectory() && !o2.isDirectory()) return idDirectory - idFile;
+                    
+                    else return idFile-idDirectory;
                 else
-                    return String.valueOf(o2.isDirectory()).compareToIgnoreCase(String.valueOf(o1.isDirectory()));
-                default:
-                    return 0;
+                    if(o1.isDirectory() && !o2.isDirectory()) return idFile - idDirectory;
+                    
+                    else return idDirectory-idFile;
+            default:
+                return 0;
         }
         
         return 0;

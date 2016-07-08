@@ -37,6 +37,14 @@ public class Searcher {
         this.resultsTable = resultsTable;
     }
     
+    public LinkedList<FileFiltering> getResultsList(){
+        return resultsList;
+    }
+    
+    public boolean hasResults(){
+        return !resultsList.isEmpty();
+    }
+    
     public void search(String filter) throws IOException{
         
         resultsList = new LinkedList<>();

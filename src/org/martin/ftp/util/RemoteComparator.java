@@ -17,7 +17,7 @@ public class RemoteComparator implements Comparator<FTPFile>{
     private SortOption option;
     private SortOption order;
     private static final byte idDirectory = 0;
-    private static final byte idFile = 0;
+    private static final byte idFile = 1;
     
     public RemoteComparator(SortOption option, SortOption order) {
         this.option = option;

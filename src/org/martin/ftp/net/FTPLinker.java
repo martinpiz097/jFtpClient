@@ -69,7 +69,7 @@ public class FTPLinker {
         client = new FTPClient();
         client.connect(server);
         client.login(user, password);
-        client.enterLocalActiveMode();
+        client.setFileType(FTPClient.BINARY_FILE_TYPE);
     }
 
     public FTPFileFilter getFilter(Filter filter){
@@ -88,6 +88,10 @@ public class FTPLinker {
             }
             else return true;
         };
+    }
+
+    public int getReply(){
+        return client.getReplyCode();
     }
     
     public String getReplyCode(){
@@ -595,17 +599,20 @@ public class FTPLinker {
         
         // URL url = new URL("ftp://" + user + ":" + password + "@" + server + directory);
         // Se trabaja con cualquier tipo de archivo
-        client.setFileType(FTP.BINARY_FILE_TYPE);
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
-        client.storeFile(f.getName(), bis);
-        System.out.println(client.getReplyString());
+        // client.storeFile(f.getName(), bis);
+        client.appendFile(f.getName(), bis);
+        System.out.println(getReplyCode());
         bis.close();
     }
     
     public void uploadFolder(File folder, String remotePath) throws IOException{
         
         createDirectory(remotePath, folder.getName());
-        String newPath = remotePath + "/" + folder.getName();
+        String newPath = "";
+        
+        if(remotePath.endsWith("/"))  newPath = remotePath + folder.getName();
+        else newPath  = remotePath + "/" + folder.getName();
         
         for (File file : folder.listFiles())
             if(file.isDirectory()) uploadFolder(file, newPath);

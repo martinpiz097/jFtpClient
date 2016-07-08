@@ -152,9 +152,75 @@ public class Utilities {
                 hours + doublePoints + minutes + doublePoints + seconds;
     }
     
-    public static void openWindow(Window window, Component objectiveLocation){
+    /**
+     * Ubica una ventana sobre un componente específico, si el componente es 
+     * null, ésta es ubicada al centro del monitor
+     * @param window Ventana a reubicar
+     * @param objetiveLocation Componente objetivo
+     */
+    
+    public static void resize(Window window, Component objetiveLocation){
         window.setSize(window.getPreferredSize());
-        window.setLocationRelativeTo(objectiveLocation);
+        window.setLocationRelativeTo(objetiveLocation);
+    }
+    
+    /**
+     * Ubica una ventana sobre un componente específico y la redimensiona segun
+     * el ancho y alto entregado por parametro
+     * @param window Ventana a reubicar
+     * @param objetiveLocation Componente objetivo
+     * @param width Nuevo ancho de la ventana
+     * @param height Nuevo alto de la ventana
+     */
+    
+    public static void resize(Window window, Component objetiveLocation, int width, int height){
+        window.setSize(width, height);
+        window.setLocationRelativeTo(null);
+    }
+    
+    /**
+     * Redimensiona una ventana según el metodo getPreferedSize() de ésta
+     * @param window Ventana a redimensionar
+     */
+    
+    public static void resize(Window window){
+        window.setSize(window.getPreferredSize());
+    }
+    
+    /**
+     * Redimiensiona una ventana segun el ancho y alto entregado por parametro
+     * @param window Ventana a redimiensionar
+     * @param width Nuevo ancho de la ventana
+     * @param height Nuevo alto de la ventana
+     */
+    
+    public static void resize(Window window, int width, int height){
+        window.setSize(width, height);
+    }
+    
+    /**
+     * Muestra una ventana y la ubica sobre el componente especificado
+     * por paramtros. Esta sera redimensionada segun metodo getPreferedSize()
+     * @param window Ventana a mostrar
+     * @param objectiveLocation Componente objetivo
+     */
+    
+    public static void openWindow(Window window, Component objectiveLocation){
+        resize(window, objectiveLocation);
+        window.show();
+    }
+    
+    /**
+     * Muestra una ventana, la ubica sobre el componente especificado por parametros
+     * y la redimensiona segun el ancho y alto especificado
+     * @param window Ventana a mostrar y redimensionar
+     * @param objetiveLocation Componente objetivo
+     * @param width Nuevo ancho de la ventana
+     * @param height Nuevo alto de la ventana
+     */
+    
+    public static void openWindow(Window window, Component objetiveLocation, int width, int height){
+        resize(window, objetiveLocation, width, height);
         window.show();
     }
 //    

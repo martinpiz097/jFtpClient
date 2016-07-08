@@ -11,4 +11,6 @@ cambiar forma de busqueda con lambda o solucionar el tema del filter
 
 - Corregir opcion de renombrar
 
-- Corregir orden por formato y por tipo, errores y no resultados esperados respectivamente
+- Corregir hilo Actualizador de consola o usar un mecanismo que 
+actualice la consola en toda operacion
+

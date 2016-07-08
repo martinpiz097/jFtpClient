@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,18 +32,21 @@ import org.martin.ftp.config.Setting;
 import org.martin.ftp.util.Utilities;
 import org.martin.ftp.model.TMSearch;
 import org.martin.ftp.net.FileFiltering;
+import org.martin.ftp.net.HUpdaterConsole;
 import org.martin.ftp.net.Searcher;
 import org.martin.ftp.updates.UpdatesReviewer;
 import org.martin.ftp.util.Computer;
 import org.martin.ftp.util.FilterSelector;
 import org.martin.ftp.util.SortOption;
 import static org.martin.ftp.util.Utilities.openWindow;
-
+import static org.martin.ftp.util.Utilities.resize;
+import static org.martin.ftp.util.Utilities.openWindow;
+import static org.martin.ftp.util.Utilities.resize;
 /**
  *
  * @author martin
  */
-public class Client extends javax.swing.JFrame {
+public class GUIClient extends javax.swing.JFrame {
 
     final String pathIconFolder = "/org/martin/ftp/resources/folderMain.png";
     final String pathIconCloud = "/org/martin/ftp/resources/cloud1.png";
@@ -60,8 +62,9 @@ public class Client extends javax.swing.JFrame {
     Thread tSearcher;
     Thread tUploader;
     int selectedIndex;
+    HUpdaterConsole consoleUpdater;
     
-    public Client() {
+    public GUIClient() {
 
         threadsUploaders = new LinkedList<>();
 //        try {
@@ -78,11 +81,13 @@ public class Client extends javax.swing.JFrame {
         fileChoos.addChoosableFileFilter(getDirectoryFilter());
         fileChoos.setMultiSelectionEnabled(true);
         setResizable(false);
-        dialogNewFolder.setSize(dialogNewFolder.getPreferredSize());
+        Utilities.resize(dialogNewFolder);
         dialogFileOptions.setResizable(false);
-        dialogUploadOptions.setResizable(false);
-        dialogSearchLoader.setSize(dialogSearchLoader.getPreferredSize());
+        dialogSearchLoader.setSize(316, 240);
         dialogSearchLoader.setResizable(false);
+        dialogUploadOptions.setSize(400, 130);
+        dialogUploadOptions.setResizable(false);
+        formSearch.setSize(515, 264);
         try {
             settings = new Setting();
 
@@ -102,7 +107,7 @@ public class Client extends javax.swing.JFrame {
             }
             
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         
@@ -186,6 +191,7 @@ public class Client extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
+        itemConsole = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         formSearch = new javax.swing.JFrame();
@@ -196,12 +202,20 @@ public class Client extends javax.swing.JFrame {
         jPanel8 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblSearch = new javax.swing.JTable();
+        jLabel17 = new javax.swing.JLabel();
+        cboOrderOptionS = new javax.swing.JComboBox<>();
+        jLabel18 = new javax.swing.JLabel();
+        cboOrderTypeS = new javax.swing.JComboBox<>();
+        btnOrderFilesS = new javax.swing.JButton();
+        formConsole = new javax.swing.JFrame();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txtConsole = new javax.swing.JTextArea();
         dialogNewFolder = new javax.swing.JDialog();
         panelDialog = new javax.swing.JPanel();
         txtNewFolder = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         dialogUploadOptions = new javax.swing.JDialog();
-        jPanel4 = new javax.swing.JPanel();
+        panelUploadOptions = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         btnFolderOption = new javax.swing.JButton();
         btnFileOption = new javax.swing.JButton();
@@ -412,9 +426,17 @@ public class Client extends javax.swing.JFrame {
         jMenuBar2.add(jMenu3);
 
         jMenu4.setText("Help");
-        jMenu4.setEnabled(false);
+
+        itemConsole.setText("Consola");
+        itemConsole.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemConsoleActionPerformed(evt);
+            }
+        });
+        jMenu4.add(itemConsole);
 
         jMenuItem4.setText("Acerca de...");
+        jMenuItem4.setEnabled(false);
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem4ActionPerformed(evt);
@@ -423,6 +445,7 @@ public class Client extends javax.swing.JFrame {
         jMenu4.add(jMenuItem4);
 
         jMenuItem5.setText("Comprobar Actualizaciones");
+        jMenuItem5.setEnabled(false);
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem5ActionPerformed(evt);
@@ -501,7 +524,7 @@ public class Client extends javax.swing.JFrame {
                             .addComponent(cboOrderType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(btnOrderFiles))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -575,6 +598,30 @@ public class Client extends javax.swing.JFrame {
 
         jPanel8.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
+        jLabel17.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        jLabel17.setText("Ordenar por: ");
+
+        cboOrderOptionS.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        cboOrderOptionS.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre", "Tamaño", "Fecha", "Tipo", "Formato" }));
+        cboOrderOptionS.setEnabled(false);
+
+        jLabel18.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        jLabel18.setText("Orden: ");
+
+        cboOrderTypeS.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        cboOrderTypeS.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ascendente", "Descendente" }));
+        cboOrderTypeS.setEnabled(false);
+
+        btnOrderFilesS.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
+        btnOrderFilesS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/martin/ftp/resources/orderFiles.png"))); // NOI18N
+        btnOrderFilesS.setToolTipText("Ordenar");
+        btnOrderFilesS.setEnabled(false);
+        btnOrderFilesS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOrderFilesSActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout formSearchLayout = new javax.swing.GroupLayout(formSearch.getContentPane());
         formSearch.getContentPane().setLayout(formSearchLayout);
         formSearchLayout.setHorizontalGroup(
@@ -582,8 +629,19 @@ public class Client extends javax.swing.JFrame {
             .addGroup(formSearchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(formSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(formSearchLayout.createSequentialGroup()
+                        .addComponent(jLabel17)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cboOrderOptionS, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cboOrderTypeS, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnOrderFilesS, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         formSearchLayout.setVerticalGroup(
@@ -592,9 +650,28 @@ public class Client extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(formSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(formSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel17)
+                        .addComponent(cboOrderOptionS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel18)
+                        .addComponent(cboOrderTypeS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnOrderFilesS))
+                .addGap(12, 12, 12)
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE))
         );
+
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder("Consola"));
+
+        txtConsole.setEditable(false);
+        txtConsole.setBackground(java.awt.Color.black);
+        txtConsole.setColumns(20);
+        txtConsole.setFont(new java.awt.Font("DejaVu Sans", 1, 18)); // NOI18N
+        txtConsole.setForeground(java.awt.Color.green);
+        txtConsole.setRows(5);
+        jScrollPane3.setViewportView(txtConsole);
+
+        formConsole.getContentPane().add(jScrollPane3, java.awt.BorderLayout.CENTER);
 
         panelDialog.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(102, 255, 102), null));
         panelDialog.setPreferredSize(new java.awt.Dimension(404, 65));
@@ -637,7 +714,7 @@ public class Client extends javax.swing.JFrame {
             }
         });
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(51, 255, 102), null));
+        panelUploadOptions.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(51, 255, 102), null));
 
         jLabel5.setFont(new java.awt.Font("DejaVu Sans", 1, 18)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -671,38 +748,38 @@ public class Client extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelUploadOptionsLayout = new javax.swing.GroupLayout(panelUploadOptions);
+        panelUploadOptions.setLayout(panelUploadOptionsLayout);
+        panelUploadOptionsLayout.setHorizontalGroup(
+            panelUploadOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelUploadOptionsLayout.createSequentialGroup()
+                .addGroup(panelUploadOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelUploadOptionsLayout.createSequentialGroup()
                         .addGap(17, 17, 17)
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGroup(panelUploadOptionsLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(btnFileOption)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnFolderOption)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnZipOption)))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        panelUploadOptionsLayout.setVerticalGroup(
+            panelUploadOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelUploadOptionsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel5)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelUploadOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnFileOption)
                     .addComponent(btnFolderOption)
                     .addComponent(btnZipOption))
                 .addContainerGap())
         );
 
-        dialogUploadOptions.getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
+        dialogUploadOptions.getContentPane().add(panelUploadOptions, java.awt.BorderLayout.CENTER);
 
         dialogViewConfigs.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
@@ -909,16 +986,7 @@ public class Client extends javax.swing.JFrame {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout dialogFileOptionsLayout = new javax.swing.GroupLayout(dialogFileOptions.getContentPane());
-        dialogFileOptions.getContentPane().setLayout(dialogFileOptionsLayout);
-        dialogFileOptionsLayout.setHorizontalGroup(
-            dialogFileOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        dialogFileOptionsLayout.setVerticalGroup(
-            dialogFileOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
+        dialogFileOptions.getContentPane().add(jPanel6, java.awt.BorderLayout.CENTER);
 
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Ingrese el nuevo nombre del archivo"));
 
@@ -1207,7 +1275,7 @@ public class Client extends javax.swing.JFrame {
             else connect(server, user, pass);
 
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnConnectActionPerformed
 
@@ -1255,7 +1323,7 @@ public class Client extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) try {
             setWorkingDirectory();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }//GEN-LAST:event_tblFilesMouseReleased
@@ -1270,7 +1338,7 @@ public class Client extends javax.swing.JFrame {
                     linker.setWorkingDirectory(dir);
                     updateTable();
                 } catch (IOException ex) {
-                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         
@@ -1286,7 +1354,7 @@ public class Client extends javax.swing.JFrame {
             linker.logout();
             linker.disconnect();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_formManagementWindowClosing
 
@@ -1295,7 +1363,7 @@ public class Client extends javax.swing.JFrame {
         try {
             updateTable();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnUpdateDirectoryActionPerformed
 
@@ -1304,7 +1372,7 @@ public class Client extends javax.swing.JFrame {
             linker.setToParentDirectory();
             updateTable();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnBackActionPerformed
 
@@ -1313,7 +1381,7 @@ public class Client extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) try {
             setWorkingDirectory();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_tblFilesKeyPressed
 
@@ -1329,7 +1397,7 @@ public class Client extends javax.swing.JFrame {
                     linker.createDirectory(directorioActual, nameFolder);
                     updateTable();
                 } catch (IOException ex) {
-                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             
@@ -1340,8 +1408,8 @@ public class Client extends javax.swing.JFrame {
 
     private void btnAddFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFolderActionPerformed
 
-        dialogNewFolder.show();
-        dialogNewFolder.setLocationRelativeTo(null);
+        openWindow(dialogNewFolder, null);
+        if(dialogNewFolder.isResizable()) dialogNewFolder.setResizable(false);
         if (!txtNewFolder.isFocusable()) txtNewFolder.requestFocus();
         
     }//GEN-LAST:event_btnAddFolderActionPerformed
@@ -1352,7 +1420,7 @@ public class Client extends javax.swing.JFrame {
             restoreConfigs();
             JOptionPane.showMessageDialog(this, "Configuraciones reestablecidas");
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -1381,15 +1449,13 @@ public class Client extends javax.swing.JFrame {
             
             else closeSession();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void dialogUploadOptionsWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_dialogUploadOptionsWindowOpened
-
-        dialogUploadOptions.setSize(dialogUploadOptions.getPreferredSize());
+        // openWindow(dialogUploadOptions, formManagement);
         dialogUploadOptions.setLocationRelativeTo(formManagement);
-        dialogViewConfigs.setResizable(false);
     }//GEN-LAST:event_dialogUploadOptionsWindowOpened
 
     private void btnFileOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFileOptionActionPerformed
@@ -1407,7 +1473,7 @@ public class Client extends javax.swing.JFrame {
                                 linker.uploadFile(file, directorioActual);
                         updateTable();
                     } catch (IOException ex) {
-                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 });
                 t.start();
@@ -1437,7 +1503,7 @@ public class Client extends javax.swing.JFrame {
                     }
                     updateTable();
                 } catch (IOException ex) {
-                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
             tUploader.start();
@@ -1446,9 +1512,7 @@ public class Client extends javax.swing.JFrame {
     }//GEN-LAST:event_btnFolderOptionActionPerformed
 
     private void dialogViewConfigsWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_dialogViewConfigsWindowOpened
-
-        dialogViewConfigs.setSize(dialogViewConfigs.getPreferredSize());
-        dialogViewConfigs.setLocationRelativeTo(null);
+        Utilities.resize(dialogViewConfigs, null);
     }//GEN-LAST:event_dialogViewConfigsWindowOpened
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
@@ -1496,7 +1560,7 @@ public class Client extends javax.swing.JFrame {
             }
             
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_btnSetDataActionPerformed
@@ -1514,7 +1578,7 @@ public class Client extends javax.swing.JFrame {
                 btnSetData.setText("Cambiar Datos");
             
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
             
             
@@ -1532,7 +1596,7 @@ public class Client extends javax.swing.JFrame {
             linker.setToRootDirectory();
             updateTable();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -1553,14 +1617,12 @@ public class Client extends javax.swing.JFrame {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void dialogFileOptionsWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_dialogFileOptionsWindowOpened
-
-        dialogFileOptions.setSize(dialogFileOptions.getPreferredSize());
-        dialogFileOptions.setLocationRelativeTo(formManagement);
+        Utilities.resize(dialogFileOptions, formManagement);
     }//GEN-LAST:event_dialogFileOptionsWindowOpened
 
     private void btnDownloadFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownloadFileActionPerformed
@@ -1569,7 +1631,7 @@ public class Client extends javax.swing.JFrame {
             FTPFile selected = getSelectedFile();
             downloadFile(selected);
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnDownloadFileActionPerformed
 
@@ -1586,7 +1648,7 @@ public class Client extends javax.swing.JFrame {
             updateTable();
             dialogFileOptions.hide();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnDeleteFileActionPerformed
 
@@ -1598,7 +1660,7 @@ public class Client extends javax.swing.JFrame {
             updateTable();
             dialogFileOptions.hide();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnRenameFileActionPerformed
 
@@ -1612,17 +1674,27 @@ public class Client extends javax.swing.JFrame {
                 
                 tSearcher = new Thread(() -> {
                     btnCancelSearch.setEnabled(true);
-                    dialogSearchLoader.show();
-                    dialogSearchLoader.setLocationRelativeTo(formSearch);
+                    openWindow(dialogSearchLoader, formSearch);
                     txtSearchFilter.setEnabled(false);
                     try {
                         Searcher.getInstance(linker, tblSearch).search(filter);
                     } catch (IOException ex) {
-                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     dialogSearchLoader.hide();
                     txtSearchFilter.setEnabled(true);
                     btnCancelSearch.setEnabled(false);
+                    if (Searcher.getInstance(linker, tblSearch).hasResults()) {
+                        cboOrderOptionS.setEnabled(true);
+                        cboOrderTypeS.setEnabled(true);
+                        btnOrderFilesS.setEnabled(true);
+                    }
+                    else if (cboOrderOptionS.isEnabled() && cboOrderTypeS.isEnabled() && btnOrderFilesS.isEnabled()) {
+                        cboOrderOptionS.setEnabled(false);
+                        cboOrderTypeS.setEnabled(false);
+                        btnOrderFilesS.setEnabled(false);
+                    }
+                    
                     JOptionPane.showMessageDialog(formSearch, "Busqueda Finalizada");
                 });
                 tSearcher.start();
@@ -1652,7 +1724,7 @@ public class Client extends javax.swing.JFrame {
                     updateTable();
                     JOptionPane.showMessageDialog(dialogFileOptions, "Archivo renombrado exitosamente");
                 } catch (IOException ex) {
-                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             dialogRename.hide();
@@ -1664,7 +1736,7 @@ public class Client extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) try {
             goToFile();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_tblSearchKeyPressed
 
@@ -1673,7 +1745,7 @@ public class Client extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) try {
             goToFile();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }//GEN-LAST:event_tblSearchMouseReleased
@@ -1702,7 +1774,7 @@ public class Client extends javax.swing.JFrame {
             
             else closeSession();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
@@ -1751,7 +1823,7 @@ public class Client extends javax.swing.JFrame {
                 lblFolderIcon.setBackground(Color.CYAN);
                 dialogSetIcon.hide();
             } catch (IOException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         }        
         else{
@@ -1769,7 +1841,7 @@ public class Client extends javax.swing.JFrame {
                 lblCloudIcon.setBackground(Color.CYAN);
                 dialogSetIcon.hide();
             } catch (IOException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         else{
@@ -1810,7 +1882,7 @@ public class Client extends javax.swing.JFrame {
                         try {
                             linker.uploadZipFile(file);
                         } catch (IOException ex) {
-                            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -1847,17 +1919,26 @@ public class Client extends javax.swing.JFrame {
 
     private void btnOrderFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrderFilesActionPerformed
 
-        try {
-            Arrays.stream(linker.getNames()).forEach(System.out::println);
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
         SortOption option = SortOption.values()[cboOrderOption.getSelectedIndex()];
         SortOption order = SortOption.values()[cboOrderType.getSelectedIndex()+5];
         LinkedList<FTPFile> modelList = ((TMFiles)tblFiles.getModel()).getFiles();
         linker.orderFiles(modelList, option, order);
         tblFiles.update(tblFiles.getGraphics());
     }//GEN-LAST:event_btnOrderFilesActionPerformed
+
+    private void btnOrderFilesSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrderFilesSActionPerformed
+
+        SortOption option = SortOption.values()[cboOrderOptionS.getSelectedIndex()];
+        SortOption order = SortOption.values()[cboOrderTypeS.getSelectedIndex()+5];
+        LinkedList<FileFiltering> files = ((TMSearch)tblSearch.getModel()).getFiles();
+        Computer.orderSearchedFiles(files, option, order);
+        tblSearch.update(tblSearch.getGraphics());
+    }//GEN-LAST:event_btnOrderFilesSActionPerformed
+
+    private void itemConsoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConsoleActionPerformed
+
+        openWindow(formConsole, formManagement, 558, 261);
+    }//GEN-LAST:event_itemConsoleActionPerformed
 
     private void updateTable() throws IOException{
         
@@ -1929,13 +2010,14 @@ public class Client extends javax.swing.JFrame {
                 }
                 updateTable();
                 if(isVisible()) hide();
-                formManagement.setSize(formManagement.getPreferredSize());
-                formManagement.setLocationRelativeTo(null);
-                formManagement.setVisible(true);
+                openWindow(formManagement, null);
+//                if (consoleUpdater == null) 
+//                    consoleUpdater = new HUpdaterConsole(linker, txtConsole);
+//                
+//                if(!consoleUpdater.isAlive()) consoleUpdater.start();
                 
                 if(!settings.hasSaveConfigs())
                     clearComponents(txtServer, txtUser, txtPassword);
-                
             }
             
             else {
@@ -2034,7 +2116,6 @@ public class Client extends javax.swing.JFrame {
         
         if (selected.getFile().isDirectory()) {
             linker.setWorkingDirectory(selected.getPath());
-            System.out.println(selected.getPath());
             updateTable();
         }
         else{
@@ -2060,6 +2141,18 @@ public class Client extends javax.swing.JFrame {
         btnCancelSearch.setEnabled(false);
         Searcher.getInstance(linker, tblSearch).showResults();
         txtSearchFilter.setEnabled(true);
+        if (Searcher.getInstance(linker, tblSearch).hasResults()) {
+            cboOrderOptionS.setEnabled(true);
+            cboOrderTypeS.setEnabled(true);
+            btnOrderFilesS.setEnabled(true);
+        }
+        
+        else if (cboOrderOptionS.isEnabled() && cboOrderTypeS.isEnabled() && btnOrderFilesS.isEnabled()) {
+            cboOrderOptionS.setEnabled(false);
+            cboOrderTypeS.setEnabled(false);
+            btnOrderFilesS.setEnabled(false);
+        }
+        
     }
     
     public static void main(String args[]) {
@@ -2067,12 +2160,12 @@ public class Client extends javax.swing.JFrame {
             /* Set the Nimbus look and feel */
             javax.swing.UIManager.setLookAndFeel(new javax.swing.plaf.nimbus.NimbusLookAndFeel());
         } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUIClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new Client();
+            new GUIClient();
         });
     }
 
@@ -2088,6 +2181,7 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JButton btnFileOption;
     private javax.swing.JButton btnFolderOption;
     private javax.swing.JButton btnOrderFiles;
+    private javax.swing.JButton btnOrderFilesS;
     private javax.swing.JButton btnRenameFile;
     private javax.swing.JButton btnResetAll;
     private javax.swing.JButton btnSearch;
@@ -2096,7 +2190,9 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JButton btnUploadFile;
     private javax.swing.JButton btnZipOption;
     private javax.swing.JComboBox<String> cboOrderOption;
+    private javax.swing.JComboBox<String> cboOrderOptionS;
     private javax.swing.JComboBox<String> cboOrderType;
+    private javax.swing.JComboBox<String> cboOrderTypeS;
     private javax.swing.JCheckBox chkAuto;
     private javax.swing.JDialog dialogFileOptions;
     private javax.swing.JDialog dialogNewFolder;
@@ -2105,8 +2201,10 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JDialog dialogSetIcon;
     private javax.swing.JDialog dialogUploadOptions;
     private javax.swing.JDialog dialogViewConfigs;
+    private javax.swing.JFrame formConsole;
     private javax.swing.JFrame formManagement;
     private javax.swing.JFrame formSearch;
+    private javax.swing.JMenuItem itemConsole;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
@@ -2115,6 +2213,8 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -2141,7 +2241,6 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
@@ -2149,13 +2248,16 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblCloudIcon;
     private javax.swing.JLabel lblFolderIcon;
     private javax.swing.JLabel lblIcon;
     private javax.swing.JLabel lblSearching;
     private javax.swing.JPanel panelDialog;
+    private javax.swing.JPanel panelUploadOptions;
     private javax.swing.JTable tblFiles;
     private javax.swing.JTable tblSearch;
+    private javax.swing.JTextArea txtConsole;
     private javax.swing.JTextField txtMyHost;
     private javax.swing.JTextField txtMyPass;
     private javax.swing.JTextField txtMyUser;

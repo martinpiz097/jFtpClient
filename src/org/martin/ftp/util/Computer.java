@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import org.apache.commons.net.ftp.FTPFile;
+import org.martin.ftp.net.FileFiltering;
 
 /**
  *
@@ -20,6 +21,7 @@ public class Computer {
     
     private static RemoteComparator remote;
     private static LocalComparator local;
+    private static SearchComparator search;
     // La idea de este metodo es ordenar los directorios y archivos por nombre ademas del
     // orden ya establecido, añadir opcion de orden inverso, por fecha y tamaño
     
@@ -34,5 +36,10 @@ public class Computer {
     public static void orderLocalFiles(LinkedList<File> files, SortOption option, SortOption order){
         local = new LocalComparator(option, order);
         Collections.sort(files, local);
+    }
+    
+    public static void orderSearchedFiles(LinkedList<FileFiltering> files, SortOption option, SortOption order){
+        search = new SearchComparator(option, order);
+        Collections.sort(files, search);
     }
 }
