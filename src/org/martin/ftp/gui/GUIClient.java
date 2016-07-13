@@ -1072,7 +1072,6 @@ public class GUIClient extends javax.swing.JFrame {
         );
 
         dialogSearchLoader.setMinimumSize(new java.awt.Dimension(316, 216));
-        dialogSearchLoader.setPreferredSize(new java.awt.Dimension(316, 240));
         dialogSearchLoader.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 dialogSearchLoaderWindowOpened(evt);
@@ -1655,6 +1654,7 @@ public class GUIClient extends javax.swing.JFrame {
     private void btnRenameFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRenameFileActionPerformed
         
         try {
+            txtNewName.setText(getSelectedFile().getName());
             openWindow(dialogRename, dialogFileOptions);
             dialogRename.setResizable(false);
             updateTable();
@@ -1942,7 +1942,7 @@ public class GUIClient extends javax.swing.JFrame {
 
     private void updateTable() throws IOException{
         
-        LinkedList<FTPFile> files = linker.getOrderedFiles();
+        LinkedList<FTPFile> files = linker.getOrderedFiles(SortOption.TYPE, SortOption.UPWARD);
         directorioActual = linker.getWorkingDirectory();
         txtNewDir.setText(directorioActual);
 

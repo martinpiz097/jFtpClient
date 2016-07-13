@@ -163,7 +163,10 @@ public class FTPLinker {
      */
     
     public LinkedList<FTPFile> getOrderedFiles(SortOption option, SortOption order) throws IOException{
-        return getOrderedFiles(getWorkingDirectory());
+       LinkedList<FTPFile> files = getOrderedFiles(getWorkingDirectory());
+       Computer.orderRemoteFiles(files, option, order);
+       return files;
+       
     }
     
     /**

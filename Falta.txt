@@ -2,14 +2,16 @@
 
 - Agregar combobox para seleccionar mas de un server a conectar
 
+- Agregar opciones para directorios
+
+- Corregir apertura de cuadros de dialogo
+
 - En el metodo listFiles y listFiles(directory) que retornan arreglos
 cambiar forma de busqueda con lambda o solucionar el tema del filter
 
 - Corregir problemas al subir archivos
 
 - Corregir acceso a archivos o carpetas encontradas al hacer click o enter
-
-- Corregir opcion de renombrar
 
 - Corregir hilo Actualizador de consola o usar un mecanismo que 
 actualice la consola en toda operacion

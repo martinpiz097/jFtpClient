@@ -15,14 +15,6 @@
         </group>
         <group name="red"/>
         <group name="jFTP">
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/gui/Client.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/net/HUpdaterConsole.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/util/RemoteComparator.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/net/Tester.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/util/Computer.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/net/FTPLinker.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/util/LocalComparator.java</file>
-            <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/model/TMFiles.java</file>
             <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/src/org/martin/ftp/util/SortOption.java</file>
             <file>file:/home/martin/Dropbox/Java/Proyectos/NetBeansProjects/ftp/Falta.txt</file>
         </group>
